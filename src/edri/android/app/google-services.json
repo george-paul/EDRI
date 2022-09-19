@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "127378341349",
+    "project_id": "edri-ihub",
+    "storage_bucket": "edri-ihub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127378341349:android:d15d5d684f3722a283430c",
+        "android_client_info": {
+          "package_name": "com.example.edri"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "127378341349-nepvlq9pfucvekc5711kirnmfhodgr6c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVHUz3l3SX1YaJOQYUnlXBL7y6W6l-M3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "127378341349-nepvlq9pfucvekc5711kirnmfhodgr6c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
