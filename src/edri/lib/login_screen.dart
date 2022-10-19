@@ -251,23 +251,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: screenHeight * 0.18,
                     ),
-                    // Stepper(
-                    //   currentStep: cStep,
-                    //   steps: [
-                    //     Step(
-                    //       title: Text("Step 1"),
-                    //       content: Container(
-                    //         color: Colors.white10,
-                    //       ),
-                    //     ),
-                    //     Step(
-                    //       title: Text("Step 2"),
-                    //       content: Container(
-                    //         color: Colors.white10,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 1000),
                       transitionBuilder: (child, animation) {
@@ -310,19 +293,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             verifyOTP();
                           }
-                          // if (!sentOTP) {
-                          //   String phNo = "+91" + numberController.text;
-                          //   auth.verifyPhoneNumber(
-                          //     phoneNumber: phNo,
-                          //     verificationCompleted: (PhoneAuthCredential credential) {},
-                          //     verificationFailed: (FirebaseAuthException e) {},
-                          //     codeSent: (String verificationId, int? resendToken) {},
-                          //     codeAutoRetrievalTimeout: (String verificationId) {},
-                          //   );
-                          //   sentOTP = true;
-                          // }
-                          // sentOTP = !sentOTP;
-                          // redDBG(sentOTP.toString());
                         },
                         child: (isLoading)
                             ? Padding(
