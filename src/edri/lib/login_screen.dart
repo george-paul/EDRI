@@ -111,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verID, smsCode: otpController.text);
     await auth.signInWithCredential(credential).then((value) {
       Fluttertoast.showToast(msg: "Signed In");
-      Navigator.pushReplacementNamed(context, "/survey");
+      Navigator.pushReplacementNamed(context, "/survey_selection");
     }).catchError((err) {
       redDBG(err);
       Fluttertoast.showToast(msg: "Something went wrong!");

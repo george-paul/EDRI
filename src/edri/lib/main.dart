@@ -38,10 +38,22 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       darkTheme: darkTheme,
       theme: lightTheme,
-      home: (auth.currentUser == null) ? const LoginScreen() : const SurveyScreen(),
+      home: (auth.currentUser == null) ? const LoginScreen() : const SurveySelectionScreen(),
       routes: {
         "/login": (context) => const LoginScreen(),
-        "/survey": (context) => const SurveyScreen(),
+        "/survey_selection": (context) => const SurveySelectionScreen(),
+      },
+      // Routes with Paramaters
+      onGenerateRoute: (settings) {
+        if (settings.name == "/survey") {
+          // give arguments as (surveyNumber)
+          final List<int> args = settings.arguments as List<int>;
+          final int sNo = args[0];
+          return MaterialPageRoute(builder: (_) => SurveyScreen(surveyNumber: sNo));
+        } else {
+          return MaterialPageRoute(
+              builder: (_) => (auth.currentUser == null) ? const LoginScreen() : const SurveySelectionScreen());
+        }
       },
     );
   }
