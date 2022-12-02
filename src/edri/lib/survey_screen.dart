@@ -2,9 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'survey01_forms/survey01_forms.dart';
-
 import 'util.dart';
+import 'survey01_forms/survey01_export.dart';
 
 class SurveyScreen extends StatefulWidget {
   final int surveyNumber;
@@ -17,8 +16,8 @@ class SurveyScreen extends StatefulWidget {
 }
 
 class _SurveyScreenState extends State<SurveyScreen> {
-  FirebaseAuth auth = FirebaseAuth.instance;
   List<Widget> tabViews = [];
+  List<String> tabTitles = [];
 
   List<Tab> tabs = [];
 
@@ -28,19 +27,31 @@ class _SurveyScreenState extends State<SurveyScreen> {
       case 1:
         tabViews = [
           const InspectorDetails(),
-          const FirstForm(),
+          const Hazard(),
+        ];
+        tabTitles = [
+          "Inspector Details",
+          "Hazard",
         ];
         break;
       case 2:
         tabViews = [
           const InspectorDetails(),
-          const FirstForm(),
+          const Hazard(),
+        ];
+        tabTitles = [
+          "Inspector Details",
+          "Hazard",
         ];
         break;
       case 3:
         tabViews = [
           const InspectorDetails(),
-          const FirstForm(),
+          const Hazard(),
+        ];
+        tabTitles = [
+          "Inspector Details",
+          "Hazard",
         ];
         break;
       default:
@@ -48,7 +59,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
     tabs = List.generate(tabViews.length, (index) {
       return Tab(
-        text: "Step ${index + 1}",
+        text: tabTitles[index],
       );
     });
     super.initState();
@@ -64,6 +75,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
           actions: [
             IconButton(
               onPressed: () {
+                FirebaseAuth auth = FirebaseAuth.instance;
                 auth.signOut();
                 Fluttertoast.showToast(msg: "Signed Out.");
                 Navigator.pushReplacementNamed(context, "/login");

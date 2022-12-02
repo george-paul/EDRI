@@ -37,6 +37,14 @@ const List<String> surveyTitles = [
   "Survey 03",
 ];
 
+class Pair<T1, T2> {
+  T1 a;
+  T2 b;
+
+  Pair(this.a, this.b);
+}
+
+
 // class Util {
 //   static void greenDBG(String err) {
 //     debugPrint("\x1B[32m $err \x1B[0m");

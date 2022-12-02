@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'util.dart';
 
 class SurveyCard extends StatelessWidget {
@@ -62,6 +63,7 @@ class SurveySelectionScreen extends StatelessWidget {
               onPressed: () {
                 FirebaseAuth auth = FirebaseAuth.instance;
                 auth.signOut();
+                Fluttertoast.showToast(msg: "Signed Out.");
                 Navigator.pushReplacementNamed(context, "/login");
               },
               icon: Icon(Icons.logout))
