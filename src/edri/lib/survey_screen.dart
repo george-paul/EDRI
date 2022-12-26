@@ -26,33 +26,27 @@ class _SurveyScreenState extends State<SurveyScreen> {
     switch (widget.surveyNumber) {
       case 1:
         tabViews = [
-          const InspectorDetails(),
-          const Hazard(),
+          const InspectorDetailsForm(),
+          const HazardForm(),
+          const GroundShakingForm(),
+          const ExposureForm(),
+          const VulnerabilityForm(),
         ];
         tabTitles = [
           "Inspector Details",
           "Hazard",
+          "Ground Shaking",
+          "Exposure",
+          "Vulnerability",
         ];
         break;
       case 2:
-        tabViews = [
-          const InspectorDetails(),
-          const Hazard(),
-        ];
-        tabTitles = [
-          "Inspector Details",
-          "Hazard",
-        ];
+        tabViews = [];
+        tabTitles = [];
         break;
       case 3:
-        tabViews = [
-          const InspectorDetails(),
-          const Hazard(),
-        ];
-        tabTitles = [
-          "Inspector Details",
-          "Hazard",
-        ];
+        tabViews = [];
+        tabTitles = [];
         break;
       default:
     }

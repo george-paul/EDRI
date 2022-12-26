@@ -15,13 +15,14 @@ class SurveyCard extends StatelessWidget {
     double imageSize = MediaQuery.of(context).size.width / 4;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: GestureDetector(
         onTap: () {
           Navigator.pushNamed(context, "/survey", arguments: [surveyNumber]);
         },
         child: Card(
-          shape: RoundedRectangleBorder(borderRadius: borderRadius),
+          elevation: 0,
+          shape: const RoundedRectangleBorder(borderRadius: borderRadius),
           child: Row(
             children: [
               // ignore: unnecessary_brace_in_string_interps
@@ -31,12 +32,12 @@ class SurveyCard extends StatelessWidget {
                   height: imageSize,
                   child: ClipRRect(
                     borderRadius: borderRadius,
-                    child: Image.asset("assets/images/surveyImage${surveyNumber}.png"),
+                    child: Image.asset("assets/images/surveyImage$surveyNumber.png"),
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
                   surveyTitles[surveyNumber],
                   style: Theme.of(context).textTheme.subtitle1,
@@ -66,11 +67,11 @@ class SurveySelectionScreen extends StatelessWidget {
                 Fluttertoast.showToast(msg: "Signed Out.");
                 Navigator.pushReplacementNamed(context, "/login");
               },
-              icon: Icon(Icons.logout))
+              icon: const Icon(Icons.logout))
         ],
       ),
       body: Column(
-        children: [
+        children: const [
           SurveyCard(
             surveyNumber: 1,
           ),

@@ -24,14 +24,19 @@ class MyApp extends StatelessWidget {
         seedColor: Colors.deepOrange.shade900,
         brightness: Brightness.dark,
       ),
+    ).copyWith(
+      scaffoldBackgroundColor: Colors.black,
     );
-    darkTheme = darkTheme.copyWith(scaffoldBackgroundColor: Colors.black);
+    // darkTheme = darkTheme.copyWith(scaffoldBackgroundColor: Colors.black);
     // darkTheme = darkTheme.copyWith(tabBarTheme:TabBarTheme());
     ThemeData lightTheme = ThemeData.from(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.deepOrange.shade700,
+        seedColor: Colors.deepOrange.shade500,
         brightness: Brightness.light,
       ),
+    ).copyWith(
+      canvasColor: Colors.deepOrange.shade50,
+      cardColor: Colors.deepOrange.shade50,
     );
 
     return MaterialApp(

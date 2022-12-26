@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class InspectorDetails extends StatefulWidget {
-  const InspectorDetails({Key? key}) : super(key: key);
+class InspectorDetailsForm extends StatefulWidget {
+  const InspectorDetailsForm({Key? key}) : super(key: key);
 
   @override
-  State<InspectorDetails> createState() => _InspectorDetailsState();
+  State<InspectorDetailsForm> createState() => _InspectorDetailsFormState();
 }
 
-class _InspectorDetailsState extends State<InspectorDetails> {
+class _InspectorDetailsFormState extends State<InspectorDetailsForm> {
   TextEditingController inspIDCtl = TextEditingController();
   TextEditingController dateCtl = TextEditingController();
   TextEditingController timeCtl = TextEditingController();
@@ -83,6 +83,8 @@ class _InspectorDetailsState extends State<InspectorDetails> {
 
                       // siddharth: why picked != time
                       if (picked != null && picked != time) {
+                        // can ignore this prblem because localisation shouldn't change across this async gap
+                        // ignore: use_build_context_synchronously
                         timeCtl.text = picked.format(context);
                         setState(() {
                           time = picked;
