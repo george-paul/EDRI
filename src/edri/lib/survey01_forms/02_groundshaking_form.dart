@@ -1,5 +1,10 @@
-import 'package:camera_camera/camera_camera.dart';
+import 'dart:io';
+
+import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
+import 'package:path_provider/path_provider.dart';
 import '../camera_screen.dart';
 import '../util.dart';
 
@@ -11,7 +16,10 @@ class GroundShakingForm extends StatefulWidget {
   _GroundShakingFormState createState() => _GroundShakingFormState();
 }
 
-class _GroundShakingFormState extends State<GroundShakingForm> {
+class _GroundShakingFormState extends State<GroundShakingForm> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   static const BorderRadius borderRadiusCached = BorderRadius.all(Radius.circular(20.0));
 
   //
@@ -45,8 +53,9 @@ class _GroundShakingFormState extends State<GroundShakingForm> {
             groupValue: selectedZoneFactor,
             value: index,
             onChanged: (val) {
+              GetIt.I<Survey01Data>().zoneFactor = val as int;
               setState(() {
-                selectedZoneFactor = val as int;
+                selectedZoneFactor = val;
               });
             },
           );
@@ -85,8 +94,9 @@ class _GroundShakingFormState extends State<GroundShakingForm> {
             groupValue: selectedSoilType,
             value: index,
             onChanged: (val) {
+              GetIt.I<Survey01Data>().soilType = val as int;
               setState(() {
-                selectedSoilType = val as int;
+                selectedSoilType = val;
               });
             },
           );
@@ -114,6 +124,13 @@ class _GroundShakingFormState extends State<GroundShakingForm> {
             ),
             const SizedBox(height: 15),
             TextField(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (val) {
+                int? parsedInt = int.tryParse(val);
+                if (parsedInt != null) {
+                  GetIt.I<Survey01Data>().numberOfStoreys = parsedInt;
+                }
+              },
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -131,8 +148,11 @@ class _GroundShakingFormState extends State<GroundShakingForm> {
   // -------------------------------------- Views Of Structure --------------------------------------
   //
   void takeStructureViewPicture(int index) async {
-    // TODO: save picture file
-    final imgFile = await Navigator.push(context, MaterialPageRoute(builder: (context) => CameraPage()));
+    final File imgFile = await Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraPage()));
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    await imgFile.copy("${appDocDir.path}/StructureView${index.toString()}");
+
+    GetIt.I<Survey01Data>().picturesTaken[index] = true;
     setState(() {
       hasTakenPicture[index] = true;
     });
@@ -226,6 +246,7 @@ class _GroundShakingFormState extends State<GroundShakingForm> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),

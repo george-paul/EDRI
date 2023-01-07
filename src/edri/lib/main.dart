@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get_it/get_it.dart';
 import 'firebase_options.dart';
 
 import 'package:flutter/material.dart';
+import 'global_data.dart';
 import 'routes.dart';
 
 Future<void> main() async {
@@ -10,6 +12,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // getIt setup
+  GetIt.I.registerSingleton<GlobalData>(GlobalData());
+
   runApp(const MyApp());
 }
 

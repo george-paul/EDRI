@@ -1,4 +1,7 @@
+import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import '../util.dart';
 
 class ExposureForm extends StatefulWidget {
@@ -8,7 +11,10 @@ class ExposureForm extends StatefulWidget {
   _ExposureFormState createState() => _ExposureFormState();
 }
 
-class _ExposureFormState extends State<ExposureForm> {
+class _ExposureFormState extends State<ExposureForm> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   static const BorderRadius borderRadiusCached = BorderRadius.all(Radius.circular(20.0));
 
   //
@@ -27,7 +33,7 @@ class _ExposureFormState extends State<ExposureForm> {
       child: ExpansionTile(
         tilePadding: const EdgeInsets.all(20),
         title: Text(
-          "Zone Factor",
+          "Importance I",
           style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
@@ -40,8 +46,9 @@ class _ExposureFormState extends State<ExposureForm> {
             groupValue: selectedImportance,
             value: index,
             onChanged: (val) {
+              GetIt.I<Survey01Data>().importance = val as int;
               setState(() {
-                selectedImportance = val as int;
+                selectedImportance = val;
               });
             },
           );
@@ -70,6 +77,13 @@ class _ExposureFormState extends State<ExposureForm> {
             ),
             const SizedBox(height: 15),
             TextField(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (val) {
+                int? parsedInt = int.tryParse(val);
+                if (parsedInt != null) {
+                  GetIt.I<Survey01Data>().fsi = parsedInt;
+                }
+              },
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -103,6 +117,13 @@ class _ExposureFormState extends State<ExposureForm> {
             ),
             const SizedBox(height: 15),
             TextField(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (val) {
+                int? parsedInt = int.tryParse(val);
+                if (parsedInt != null) {
+                  GetIt.I<Survey01Data>().fsiAllowable = parsedInt;
+                }
+              },
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -118,6 +139,7 @@ class _ExposureFormState extends State<ExposureForm> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),

@@ -1,4 +1,7 @@
+import 'package:edri/survey01_forms/survey01_data.dart';
+import 'package:edri/util.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class InspectorDetailsForm extends StatefulWidget {
   const InspectorDetailsForm({Key? key}) : super(key: key);
@@ -7,7 +10,10 @@ class InspectorDetailsForm extends StatefulWidget {
   State<InspectorDetailsForm> createState() => _InspectorDetailsFormState();
 }
 
-class _InspectorDetailsFormState extends State<InspectorDetailsForm> {
+class _InspectorDetailsFormState extends State<InspectorDetailsForm> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   TextEditingController inspIDCtl = TextEditingController();
   TextEditingController dateCtl = TextEditingController();
   TextEditingController timeCtl = TextEditingController();
@@ -16,12 +22,15 @@ class _InspectorDetailsFormState extends State<InspectorDetailsForm> {
   void initState() {
     dateCtl.text = DateTime.now().toIso8601String().substring(0, 10);
     timeCtl.text = DateTime.now().toIso8601String().substring(11, 16);
+    GetIt.I<Survey01Data>().inspDate = dateCtl.text;
+    GetIt.I<Survey01Data>().inspTime = timeCtl.text;
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Form(
       // siddharth: why scrollbar
       child: Scrollbar(
@@ -33,6 +42,9 @@ class _InspectorDetailsFormState extends State<InspectorDetailsForm> {
               child: Column(
                 children: [
                   TextFormField(
+                    onChanged: (val) {
+                      GetIt.I<Survey01Data>().inspID = val;
+                    },
                     controller: inspIDCtl,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -42,6 +54,7 @@ class _InspectorDetailsFormState extends State<InspectorDetailsForm> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    onChanged: (val) {},
                     readOnly: true,
                     controller: dateCtl,
                     decoration: const InputDecoration(
@@ -61,6 +74,7 @@ class _InspectorDetailsFormState extends State<InspectorDetailsForm> {
                       );
                       if (date != null) {
                         dateCtl.text = date.toIso8601String().substring(0, 10);
+                        GetIt.I<Survey01Data>().inspDate = dateCtl.text;
                       }
                     },
                   ),
@@ -86,6 +100,7 @@ class _InspectorDetailsFormState extends State<InspectorDetailsForm> {
                         // can ignore this prblem because localisation shouldn't change across this async gap
                         // ignore: use_build_context_synchronously
                         timeCtl.text = picked.format(context);
+                        GetIt.I<Survey01Data>().inspTime = timeCtl.text;
                         setState(() {
                           time = picked;
                         });

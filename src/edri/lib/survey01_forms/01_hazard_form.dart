@@ -1,4 +1,6 @@
+import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import '../util.dart';
 
 class HazardForm extends StatefulWidget {
@@ -9,7 +11,10 @@ class HazardForm extends StatefulWidget {
   _HazardFormState createState() => _HazardFormState();
 }
 
-class _HazardFormState extends State<HazardForm> {
+class _HazardFormState extends State<HazardForm> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   List<Pair<bool, String>> hazardOptions = [
     Pair(false, "Liquefaction"),
     Pair(false, "Rockfall"),
@@ -34,6 +39,7 @@ class _HazardFormState extends State<HazardForm> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         Padding(
@@ -56,6 +62,7 @@ class _HazardFormState extends State<HazardForm> {
                   title: Text(hazardOptions[index].b),
                   value: hazardOptions[index].a,
                   onChanged: (val) {
+                    GetIt.I<Survey01Data>().hazardOptions[index] = val ?? false;
                     setState(() {
                       hazardOptions[index].a = val ?? false;
                       setSelectedHazards();

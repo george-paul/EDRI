@@ -1,6 +1,9 @@
+import 'package:edri/global_data.dart';
+import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get_it/get_it.dart';
 
 import 'util.dart';
 import 'survey01_forms/survey01_export.dart';
@@ -24,6 +27,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   @override
   void initState() {
     switch (widget.surveyNumber) {
+      // -------------- Survey 01 --------------
       case 1:
         tabViews = [
           const InspectorDetailsForm(),
@@ -40,10 +44,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
           "Vulnerability",
         ];
         break;
+      // -------------- Survey 02 --------------
       case 2:
         tabViews = [];
         tabTitles = [];
         break;
+      // -------------- Survey 03 --------------
       case 3:
         tabViews = [];
         tabTitles = [];
@@ -61,29 +67,44 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: tabs.length,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("EDRI - ${surveyTitles[widget.surveyNumber]}"),
-          actions: [
-            IconButton(
-              onPressed: () {
-                FirebaseAuth auth = FirebaseAuth.instance;
-                auth.signOut();
-                Fluttertoast.showToast(msg: "Signed Out.");
-                Navigator.pushReplacementNamed(context, "/login");
-              },
-              icon: const Icon(Icons.logout_rounded),
+    return WillPopScope(
+      onWillPop: () async {
+        if (GetIt.I<GlobalData>().cameraOpen) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+      child: DefaultTabController(
+        length: tabs.length,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("EDRI - ${surveyTitles[widget.surveyNumber]}"),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  FirebaseAuth auth = FirebaseAuth.instance;
+                  auth.signOut();
+                  Fluttertoast.showToast(msg: "Signed Out.");
+                  Navigator.pushReplacementNamed(context, "/login");
+                },
+                icon: const Icon(Icons.logout_rounded),
+              ),
+            ],
+            bottom: TabBar(
+              isScrollable: true,
+              tabs: tabs,
             ),
-          ],
-          bottom: TabBar(
-            isScrollable: true,
-            tabs: tabs,
           ),
-        ),
-        body: TabBarView(
-          children: tabViews,
+          body: TabBarView(
+            children: tabViews,
+          ),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.save),
+            onPressed: () {
+              GetIt.I<Survey01Data>().testPrint();
+            },
+          ),
         ),
       ),
     );
