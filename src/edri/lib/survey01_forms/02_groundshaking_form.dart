@@ -26,13 +26,12 @@ class _GroundShakingFormState extends State<GroundShakingForm> with AutomaticKee
   // -------------------------------------- Zone Factor --------------------------------------
   //
   List<Pair<bool, String>> zoneFactorOptions = [
-    Pair(false, "None"),
     Pair(false, "Zone-II"),
     Pair(false, "Zone-III"),
     Pair(false, "Zone-IV"),
     Pair(false, "Zone-V"),
   ];
-  int selectedZoneFactor = 0;
+  int? selectedZoneFactor;
 
   Widget buildZoneFactor() {
     return ExpansionTileCard(
@@ -44,7 +43,7 @@ class _GroundShakingFormState extends State<GroundShakingForm> with AutomaticKee
           style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
-          zoneFactorOptions[selectedZoneFactor].b,
+          (selectedZoneFactor != null) ? zoneFactorOptions[selectedZoneFactor!].b : "None",
           style: Theme.of(context).textTheme.bodyText2,
         ),
         children: List.generate(zoneFactorOptions.length, (index) {
@@ -68,12 +67,11 @@ class _GroundShakingFormState extends State<GroundShakingForm> with AutomaticKee
   // -------------------------------------- Soil Type --------------------------------------
   //
   List<Pair<bool, String>> soilTypeOptions = [
-    Pair(false, "None"),
     Pair(false, "Hard Rock"),
     Pair(false, "Medium Soil"),
     Pair(false, "Soft Soil"),
   ];
-  int selectedSoilType = 0;
+  int? selectedSoilType;
 
   Widget buildSoilType() {
     return ExpansionTileCard(
@@ -85,7 +83,7 @@ class _GroundShakingFormState extends State<GroundShakingForm> with AutomaticKee
           style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
-          soilTypeOptions[selectedSoilType].b,
+          (selectedSoilType != null) ? soilTypeOptions[selectedSoilType!].b : "None",
           style: Theme.of(context).textTheme.bodyText2,
         ),
         children: List.generate(soilTypeOptions.length, (index) {

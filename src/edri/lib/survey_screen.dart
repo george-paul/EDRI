@@ -38,7 +38,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         ];
         tabTitles = [
           "Inspector Details",
-          "Hazard",
+          "Collateral Hazard",
           "Ground Shaking",
           "Exposure",
           "Vulnerability",

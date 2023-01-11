@@ -25,7 +25,7 @@ class _ExposureFormState extends State<ExposureForm> with AutomaticKeepAliveClie
     Pair(false, "Office"),
     Pair(false, "Commercial"),
   ];
-  int selectedImportance = 0;
+  int? selectedImportance;
 
   Widget buildImportanceSelector() {
     return ExpansionTileCard(
@@ -33,11 +33,11 @@ class _ExposureFormState extends State<ExposureForm> with AutomaticKeepAliveClie
       child: ExpansionTile(
         tilePadding: const EdgeInsets.all(20),
         title: Text(
-          "Importance I",
+          "Importance",
           style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
-          importanceOptions[selectedImportance].b,
+          (selectedImportance != null) ? importanceOptions[selectedImportance!].b : "None",
           style: Theme.of(context).textTheme.bodyText2,
         ),
         children: List.generate(importanceOptions.length, (index) {
@@ -77,11 +77,10 @@ class _ExposureFormState extends State<ExposureForm> with AutomaticKeepAliveClie
             ),
             const SizedBox(height: 15),
             TextField(
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               onChanged: (val) {
-                int? parsedInt = int.tryParse(val);
-                if (parsedInt != null) {
-                  GetIt.I<Survey01Data>().fsi = parsedInt;
+                double? parsed = double.tryParse(val);
+                if (parsed != null) {
+                  GetIt.I<Survey01Data>().fsi = parsed;
                 }
               },
               keyboardType: TextInputType.number,
@@ -117,11 +116,11 @@ class _ExposureFormState extends State<ExposureForm> with AutomaticKeepAliveClie
             ),
             const SizedBox(height: 15),
             TextField(
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               onChanged: (val) {
-                int? parsedInt = int.tryParse(val);
-                if (parsedInt != null) {
-                  GetIt.I<Survey01Data>().fsiAllowable = parsedInt;
+                double? parsed = double.tryParse(val);
+                if (parsed != null) {
+                  greenDBG(parsed.toString());
+                  GetIt.I<Survey01Data>().fsiAllowable = parsed;
                 }
               },
               keyboardType: TextInputType.number,
