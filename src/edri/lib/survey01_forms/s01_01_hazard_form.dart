@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import '../util.dart';
 
-class HazardForm extends StatefulWidget {
-  const HazardForm({Key? key}) : super(key: key);
+class S01HazardForm extends StatefulWidget {
+  const S01HazardForm({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _HazardFormState createState() => _HazardFormState();
+  _S01HazardFormState createState() => _S01HazardFormState();
 }
 
-class _HazardFormState extends State<HazardForm> with AutomaticKeepAliveClientMixin {
+class _S01HazardFormState extends State<S01HazardForm> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -66,6 +66,7 @@ class _HazardFormState extends State<HazardForm> with AutomaticKeepAliveClientMi
                     setState(() {
                       hazardOptions[index].a = val ?? false;
                       setSelectedHazards();
+                      GetIt.I<Survey01Data>().selectedHazards = selectedHazards;
                     });
                   },
                 );

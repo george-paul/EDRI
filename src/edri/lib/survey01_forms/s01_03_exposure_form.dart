@@ -4,14 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import '../util.dart';
 
-class ExposureForm extends StatefulWidget {
-  const ExposureForm({Key? key}) : super(key: key);
+class S01ExposureForm extends StatefulWidget {
+  const S01ExposureForm({Key? key}) : super(key: key);
 
   @override
-  _ExposureFormState createState() => _ExposureFormState();
+  _S01ExposureFormState createState() => _S01ExposureFormState();
 }
 
-class _ExposureFormState extends State<ExposureForm> with AutomaticKeepAliveClientMixin {
+class _S01ExposureFormState extends State<S01ExposureForm> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 

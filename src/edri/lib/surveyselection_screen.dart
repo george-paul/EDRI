@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
+import 'global_data.dart';
 import 'util.dart';
 
 class SurveyCard extends StatelessWidget {
@@ -13,11 +14,11 @@ class SurveyCard extends StatelessWidget {
   static const BorderRadius borderRadius = BorderRadius.all(Radius.circular(20.0));
 
   void getItSetup() {
-    if (surveyNumber == 1) {
-      if (!GetIt.I.isRegistered<Survey01Data>()) {
-        GetIt.I.registerSingleton<Survey01Data>(Survey01Data());
-      }
+    GetIt.I<GlobalData>().surveyNumber = surveyNumber;
+    if (GetIt.I.isRegistered<Survey01Data>()) {
+      GetIt.I.unregister<Survey01Data>();
     }
+    GetIt.I.registerSingleton<Survey01Data>(Survey01Data());
   }
 
   @override

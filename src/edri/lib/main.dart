@@ -1,3 +1,4 @@
+import 'package:edri/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       darkTheme: darkTheme,
       theme: lightTheme,
-      home: (auth.currentUser == null) ? const LoginScreen() : const SurveySelectionScreen(),
+      home: const SplashScreen(),
       routes: {
         "/login": (context) => const LoginScreen(),
         "/survey_selection": (context) => const SurveySelectionScreen(),

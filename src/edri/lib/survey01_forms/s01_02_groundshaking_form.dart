@@ -8,15 +8,15 @@ import 'package:path_provider/path_provider.dart';
 import '../camera_screen.dart';
 import '../util.dart';
 
-class GroundShakingForm extends StatefulWidget {
-  const GroundShakingForm({Key? key}) : super(key: key);
+class S01GroundShakingForm extends StatefulWidget {
+  const S01GroundShakingForm({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _GroundShakingFormState createState() => _GroundShakingFormState();
+  _S01GroundShakingFormState createState() => _S01GroundShakingFormState();
 }
 
-class _GroundShakingFormState extends State<GroundShakingForm> with AutomaticKeepAliveClientMixin {
+class _S01GroundShakingFormState extends State<S01GroundShakingForm> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 

@@ -3,14 +3,14 @@ import 'package:edri/util.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class InspectorDetailsForm extends StatefulWidget {
-  const InspectorDetailsForm({Key? key}) : super(key: key);
+class S01InspectorDetailsForm extends StatefulWidget {
+  const S01InspectorDetailsForm({Key? key}) : super(key: key);
 
   @override
-  State<InspectorDetailsForm> createState() => _InspectorDetailsFormState();
+  State<S01InspectorDetailsForm> createState() => _S01InspectorDetailsFormState();
 }
 
-class _InspectorDetailsFormState extends State<InspectorDetailsForm> with AutomaticKeepAliveClientMixin {
+class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 

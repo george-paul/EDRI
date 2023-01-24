@@ -1,5 +1,6 @@
-export '00_inspectordetails_form.dart';
-export '01_hazard_form.dart';
-export '02_groundshaking_form.dart';
-export '03_exposure_form.dart';
-export '04_vulnerability_form.dart';
+export './s01_00_inspectordetails_form.dart';
+export './s01_01_hazard_form.dart';
+export './s01_02_groundshaking_form.dart';
+export './s01_03_exposure_form.dart';
+export './s01_04_vulnerability_form.dart';
+export './s01_05_submit.dart';
