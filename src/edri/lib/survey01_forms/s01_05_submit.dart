@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';

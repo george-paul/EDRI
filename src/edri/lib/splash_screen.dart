@@ -5,6 +5,7 @@ class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _SplashScreenState createState() => _SplashScreenState();
 }
 
@@ -33,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
             color: Theme.of(context).primaryColor,
             child: Column(
               children: [
-                Spacer(flex: 4),
+                const Spacer(flex: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -44,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         child: Image.asset("assets/images/surveyImage1.png"),
                       ),
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     SizedBox(
                       height: screenHeight / 6,
                       child: ClipRRect(
@@ -54,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ],
                 ),
-                Spacer(flex: 1),
+                const Spacer(flex: 1),
                 Text(
                   "EDRI",
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
@@ -63,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                Spacer(flex: 1),
+                const Spacer(flex: 1),
                 SizedBox(
                   height: screenHeight / 6,
                   child: ClipRRect(
@@ -71,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     child: Image.asset("assets/images/surveyImage3.png"),
                   ),
                 ),
-                Spacer(flex: 4),
+                const Spacer(flex: 4),
               ],
             ),
           ),

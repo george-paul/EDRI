@@ -148,10 +148,10 @@ class Survey01Data {
             children: [
               pw.Watermark.text(
                 "Earthquake Disaster Risk Index",
-                style: pw.TextStyle.defaultStyle().copyWith(color: PdfColor.fromInt(0x00dbdbdb)),
+                style: pw.TextStyle.defaultStyle().copyWith(color: const PdfColor.fromInt(0x00dbdbdb)),
               ),
               pw.Padding(
-                padding: pw.EdgeInsets.all(0.0),
+                padding: const pw.EdgeInsets.all(0.0),
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [

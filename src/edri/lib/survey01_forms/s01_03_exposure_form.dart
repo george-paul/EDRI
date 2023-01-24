@@ -1,6 +1,5 @@
 import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import '../util.dart';
 
@@ -8,6 +7,7 @@ class S01ExposureForm extends StatefulWidget {
   const S01ExposureForm({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _S01ExposureFormState createState() => _S01ExposureFormState();
 }
 
