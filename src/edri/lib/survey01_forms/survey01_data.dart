@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
-
 import 'package:edri/global_data.dart';
 import 'package:edri/util.dart';
 import 'package:edri/vulnerability_data.dart' as vuln;
@@ -96,7 +94,6 @@ class Survey01Data {
 
     double valSpectral = min(20 / numberOfStoreys, 2.5);
 
-    // TODO: What is N (subbed in 10 for now)
     double hazardVal = valZone * valSoilType * valSpectral;
 
     //
@@ -141,7 +138,6 @@ class Survey01Data {
         selectedEco += "> ${ecoElements[i].text}\n";
       }
     }
-    // selectedEco = selectedEco.substring(0, selectedEco.length - 2);
     List<vuln.VulnElement> lifeElements =
         vuln.getFormVulnElements(vuln.possibleLifeThreatening, lifeVulnElementMask[surveyNumber]);
     String selectedLife = "";
@@ -150,7 +146,6 @@ class Survey01Data {
         selectedLife += "> ${lifeElements[i].text}\n";
       }
     }
-    // selectedLife = selectedLife.substring(0, selectedLife.length - 2);
 
     double isLifeThreateningVal = vuln.isLifeThreatening(lifeCheckboxes, lifeVulnElementMask[surveyNumber]);
     double economicLossVal = vuln.economicLoss(ecoCheckboxes, ecoVulnElementMask[surveyNumber]);
@@ -235,9 +230,6 @@ class Survey01Data {
                           if (selectedHazards != "None") {
                             int red = Colors.red.shade400.value;
                             return borderBoxDecoration(red, 3.0);
-                          } else {
-                            int green = Colors.green.shade400.value;
-                            return borderBoxDecoration(green, 3.0);
                           }
                         }
                         if (rowNum == 9 && index == 1) {
@@ -245,22 +237,11 @@ class Survey01Data {
                           if (isLifeThreateningVal > 0) {
                             int red = Colors.red.shade400.value;
                             return borderBoxDecoration(red, 3.0);
-                          } else {
-                            int green = Colors.green.shade400.value;
-                            return borderBoxDecoration(green, 3.0);
                           }
                         }
                         // default style
                         return borderBoxDecoration(0xff000000, 1.0);
                       },
-                      // cellFormat: (index, data) {
-                      //   if (rowNum == 1 || rowNum == 9) {
-                      //     return const pw.BoxDecoration(
-                      //       color: PdfColor.fromInt(0xffff5555),
-                      //     );
-                      //   }
-                      //   return pw.BoxDecoration();
-                      // },
                       data: [
                         /*  0 */ ["Specification", "Value"],
                         /*  1 */ [
