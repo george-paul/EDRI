@@ -1,10 +1,15 @@
 import 'dart:io';
+import 'dart:math';
+import 'dart:ui';
 
 import 'package:edri/global_data.dart';
 import 'package:edri/util.dart';
 import 'package:edri/vulnerability_data.dart' as vuln;
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
+import 'package:path_provider/path_provider.dart';
+import '../vulnerability_data.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -31,8 +36,6 @@ class Survey01Data {
   double fsiAllowable = -1;
 
   // form 04
-  static const List<String> ecoVulnElementMask = ["00000000", "11111111", "11111110"];
-  static const List<String> lifeVulnElementMask = ["0000000", "1111111", "1110110"];
   List<bool> ecoCheckboxes = [];
   List<bool> lifeCheckboxes = [];
 
@@ -56,7 +59,19 @@ class Survey01Data {
     greenDBG(fsiAllowable.toString());
   }
 
+  pw.BoxDecoration borderBoxDecoration(int color, double width) {
+    return pw.BoxDecoration(
+      border: pw.TableBorder(
+        top: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
+        bottom: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
+        left: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
+        right: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
+      ),
+    );
+  }
+
   void calcEDRI() async {
+    const precisionDigits = 3;
     final surveyNumber = GetIt.I<GlobalData>().surveyNumber;
 
     //
@@ -68,7 +83,7 @@ class Survey01Data {
       return;
     }
     // ----------------------- Zone -- II -- III -- IV -- V
-    double valZ = List.of(<double>[0.10, 0.16, 0.24, 0.36])[zoneFactor];
+    double valZone = List.of(<double>[0.10, 0.16, 0.24, 0.36])[zoneFactor];
     final stringZoneFactor = List.of(<String>["Zone II", "Zone III", "Zone IV", "Zone V"])[zoneFactor];
 
     if (soilType > 2) {
@@ -76,11 +91,32 @@ class Survey01Data {
       return;
     }
     // ------------------ Soil Type -- hard - med - soft
-    double valSta = List.of(<double>[1.0, 1.33, 1.67])[soilType];
+    double valSoilType = List.of(<double>[1.0, 1.33, 1.67])[soilType];
     final stringSoilType = List.of(<String>["Hard Soil", "Medium Soil", "Soft Soil"])[soilType];
 
+    double valSpectral = min(20 / numberOfStoreys, 2.5);
+
     // TODO: What is N (subbed in 10 for now)
-    double hb = valZ * ((2.5 < (20 / 10) * valSta) ? 2.5 : (20 / 10) * valSta);
+    double hazardVal = valZone * valSoilType * valSpectral;
+
+    //
+    //----------------------------- Structure Views -----------------------------
+    //
+
+    if (picturesTaken.any((element) => !element)) {
+      Fluttertoast.showToast(msg: "Complete structure view photographs");
+      return;
+    }
+
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    final topImage = await File("${appDocDir.path}/StructureView${0.toString()}").readAsBytes();
+    final topView = pw.MemoryImage(topImage);
+    final leftImage = await File("${appDocDir.path}/StructureView${1.toString()}").readAsBytes();
+    final leftView = pw.MemoryImage(leftImage);
+    final rightImage = await File("${appDocDir.path}/StructureView${2.toString()}").readAsBytes();
+    final rightView = pw.MemoryImage(rightImage);
+    final bottomImage = await File("${appDocDir.path}/StructureView${3.toString()}").readAsBytes();
+    final bottomView = pw.MemoryImage(bottomImage);
 
     //
     //----------------------------- Exposure -----------------------------
@@ -92,31 +128,41 @@ class Survey01Data {
     }
     // ----------------- Importance -- res - off - com
     double valImp = List.of(<double>[1.0, 1.25, 1.5])[importance];
-    double eb = valImp * fsi;
+    double exposureVal = valImp * fsi;
 
     //
     //----------------------------- Vulnerability -----------------------------
     //
-    double vbl = vuln.isLifeThreatening(lifeCheckboxes, lifeVulnElementMask[surveyNumber]);
-    double vbe = vuln.economicLoss(ecoCheckboxes, ecoVulnElementMask[surveyNumber]);
     List<vuln.VulnElement> ecoElements =
         vuln.getFormVulnElements(vuln.possibleEconomic, ecoVulnElementMask[surveyNumber]);
     String selectedEco = "";
     for (int i = 0; i < ecoElements.length; i++) {
-      if (!ecoCheckboxes[i] && ecoElements[i].runtimeType == vuln.VulnQuestion) {
-        selectedEco += "${ecoElements[i].text},\n";
+      if (ecoCheckboxes[i] && ecoElements[i].runtimeType == vuln.VulnQuestion) {
+        selectedEco += "> ${ecoElements[i].text}\n";
       }
     }
-    selectedEco = selectedEco.substring(0, selectedEco.length - 2);
+    // selectedEco = selectedEco.substring(0, selectedEco.length - 2);
     List<vuln.VulnElement> lifeElements =
         vuln.getFormVulnElements(vuln.possibleLifeThreatening, lifeVulnElementMask[surveyNumber]);
     String selectedLife = "";
     for (int i = 0; i < lifeElements.length; i++) {
-      if (!lifeCheckboxes[i] && lifeElements[i].runtimeType == vuln.VulnQuestion) {
-        selectedLife += "${lifeElements[i].text},\n";
+      if (lifeCheckboxes[i] && lifeElements[i].runtimeType == vuln.VulnQuestion) {
+        selectedLife += "> ${lifeElements[i].text}\n";
       }
     }
-    selectedLife = selectedLife.substring(0, selectedLife.length - 2);
+    // selectedLife = selectedLife.substring(0, selectedLife.length - 2);
+
+    double isLifeThreateningVal = vuln.isLifeThreatening(lifeCheckboxes, lifeVulnElementMask[surveyNumber]);
+    double economicLossVal = vuln.economicLoss(ecoCheckboxes, ecoVulnElementMask[surveyNumber]);
+
+    //
+    //----------------------------- Total EDRI -----------------------------
+    //
+
+    double actualRisk = hazardVal * exposureVal * economicLossVal;
+    exposureVal = valImp * fsiAllowable;
+    double allowableRisk = hazardVal * exposureVal * 1;
+    double riskValue = actualRisk / allowableRisk;
 
     //
     //----------------------------- create PDF -----------------------------
@@ -128,12 +174,16 @@ class Survey01Data {
           font: pw.Font.helveticaBold(),
           fontSize: 24,
         ),
+        header2: pw.TextStyle(
+          font: pw.Font.helveticaOblique(),
+          fontSize: 15,
+        ),
         header5: pw.TextStyle(
           font: pw.Font.helveticaOblique(),
           fontSize: 12,
         ),
         defaultTextStyle: pw.TextStyle(
-          font: pw.Font.courier(),
+          font: pw.Font.helvetica(),
           fontSize: 13,
         ),
       ),
@@ -166,29 +216,103 @@ class Survey01Data {
                     pw.Align(
                       alignment: pw.Alignment.center,
                       child: pw.Text(
-                        "Generated at $inspTime on $inspDate",
+                        "Generated at $inspTime on $inspDate by $inspID",
                         textAlign: pw.TextAlign.center,
                         style: pw.Theme.of(context).header5,
                       ),
                     ),
                     pw.SizedBox(height: 50),
                     pw.Table.fromTextArray(
-                      headerDecoration: const pw.BoxDecoration(color: PdfColor.fromInt(0x05ad7863)),
+                      border: null,
+                      headerDecoration: pw.BoxDecoration(
+                        color: PdfColor.fromInt(0x05ad7863),
+                        border: borderBoxDecoration(0xff000000, 1.0).border,
+                      ),
                       headerStyle: pw.Theme.of(context).defaultTextStyle.copyWith(fontWeight: pw.FontWeight.bold),
+                      cellDecoration: (index, data, rowNum) {
+                        if (rowNum == 1 && index == 1) {
+                          // Possible Collateral Damage
+                          if (selectedHazards != "None") {
+                            int red = Colors.red.shade400.value;
+                            return borderBoxDecoration(red, 3.0);
+                          } else {
+                            int green = Colors.green.shade400.value;
+                            return borderBoxDecoration(green, 3.0);
+                          }
+                        }
+                        if (rowNum == 9 && index == 1) {
+                          // Life Threatening
+                          if (isLifeThreateningVal > 0) {
+                            int red = Colors.red.shade400.value;
+                            return borderBoxDecoration(red, 3.0);
+                          } else {
+                            int green = Colors.green.shade400.value;
+                            return borderBoxDecoration(green, 3.0);
+                          }
+                        }
+                        // default style
+                        return borderBoxDecoration(0xff000000, 1.0);
+                      },
+                      // cellFormat: (index, data) {
+                      //   if (rowNum == 1 || rowNum == 9) {
+                      //     return const pw.BoxDecoration(
+                      //       color: PdfColor.fromInt(0xffff5555),
+                      //     );
+                      //   }
+                      //   return pw.BoxDecoration();
+                      // },
                       data: [
-                        ["Specification", "Value"],
-                        ["Collateral Damage", selectedHazards],
-                        ["Seismic Zone", stringZoneFactor],
-                        ["Soil Type", stringSoilType],
-                        ["Number of Storeys", numberOfStoreys.toString()],
-                        // --- insert spectral shape here ---
-                        ["Structure Importance", importance.toString()],
-                        ["Floor Space Index of the Structure (FSI)", fsi.toString()],
-                        ["Economic Loss Factors", selectedEco],
-                        ["Life Threatening Factors", selectedLife],
-                        ["Total EDRI", (hb * eb).toString()],
+                        /*  0 */ ["Specification", "Value"],
+                        /*  1 */ [
+                          "Possible Collateral Damage (The presence of these is a cause for concern)",
+                          selectedHazards
+                        ],
+                        /*  2 */ ["Seismic Zone", stringZoneFactor],
+                        /*  3 */ ["Soil Type", stringSoilType],
+                        /*  4 */ ["Number of Storeys", numberOfStoreys.toString()],
+                        /*  5 */ ["Spectral Shape", valSpectral.toString()],
+                        /*  6 */ ["Structure Importance", importance.toString()],
+                        /*  7 */ ["Floor Space Index of the Structure (FSI)", fsi.toString()],
+                        /*  8 */ ["Economic Loss Factors", (selectedEco == "") ? "None" : selectedEco],
+                        /*  9 */ [
+                          "Life Threatening Factors (The presence of these is cause for concern)",
+                          (selectedLife == "") ? "None" : selectedLife
+                        ],
+                        /* 10 */ ["Actual Risk", actualRisk.toStringAsFixed(precisionDigits)],
+                        /* 11 */ ["Allowable Risk", allowableRisk.toStringAsFixed(precisionDigits)],
+                        /* 12 */ ["Risk Value", riskValue.toStringAsFixed(precisionDigits)],
                       ],
                     ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    // ------------------------------------- structure views -------------------------------------
+    pdf.addPage(
+      pw.Page(
+        pageTheme: pageTheme,
+        build: (pw.Context context) {
+          return pw.Column(
+            children: [
+              pw.Text("Structure Views: ", style: pw.Theme.of(context).header2),
+              pw.Expanded(
+                child: pw.GridView(
+                  crossAxisCount: 3,
+                  children: [
+                    pw.Container(width: 100),
+                    pw.Image(topView, width: 100),
+                    pw.Container(width: 100),
+                    pw.Image(leftView, width: 100),
+                    pw.Container(width: 100),
+                    pw.Image(rightView, width: 100),
+                    pw.Container(width: 100),
+                    pw.Image(bottomView, width: 100),
+                    pw.Container(width: 100),
                   ],
                 ),
               ),

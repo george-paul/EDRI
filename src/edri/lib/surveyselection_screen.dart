@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'global_data.dart';
-import 'util.dart';
 
 class SurveyCard extends StatelessWidget {
   final int surveyNumber;
@@ -42,17 +41,25 @@ class SurveyCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
                   height: imageSize,
+                  width: imageSize,
                   child: ClipRRect(
                     borderRadius: borderRadius,
-                    child: Image.asset("assets/images/surveyImage$surveyNumber.png"),
+                    child: Image.asset(
+                      "assets/images/surveyImage$surveyNumber.png",
+                      height: imageSize,
+                      width: imageSize,
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  surveyTitles[surveyNumber],
-                  style: Theme.of(context).textTheme.subtitle1,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    surveyTitles[surveyNumber],
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
                 ),
               ),
             ],
@@ -85,13 +92,13 @@ class SurveySelectionScreen extends StatelessWidget {
       body: Column(
         children: const [
           SurveyCard(
+            surveyNumber: 0,
+          ),
+          SurveyCard(
             surveyNumber: 1,
           ),
           SurveyCard(
             surveyNumber: 2,
-          ),
-          SurveyCard(
-            surveyNumber: 3,
           ),
         ],
       ),

@@ -42,20 +42,23 @@ class _SplashScreenState extends State<SplashScreen> {
                       height: screenHeight / 6,
                       child: ClipRRect(
                         borderRadius: borderRadius,
-                        child: Image.asset("assets/images/surveyImage1.png"),
+                        child: Image.asset("assets/images/inai.png"),
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 50),
                     SizedBox(
                       height: screenHeight / 6,
                       child: ClipRRect(
                         borderRadius: borderRadius,
-                        child: Image.asset("assets/images/surveyImage2.png"),
+                        child: Image.asset(
+                          "assets/images/ihub.png",
+                          // height: screenHeight / 6,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const Spacer(flex: 1),
+                const Spacer(flex: 2),
                 Text(
                   "EDRI",
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
@@ -64,12 +67,15 @@ class _SplashScreenState extends State<SplashScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                const Spacer(flex: 1),
+                const Spacer(flex: 2),
                 SizedBox(
                   height: screenHeight / 6,
                   child: ClipRRect(
                     borderRadius: borderRadius,
-                    child: Image.asset("assets/images/surveyImage3.png"),
+                    child: Image.asset(
+                      "assets/images/iiit.png",
+                      height: screenHeight / 6,
+                    ),
                   ),
                 ),
                 const Spacer(flex: 4),

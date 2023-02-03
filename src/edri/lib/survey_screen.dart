@@ -1,8 +1,6 @@
 import 'package:edri/global_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-
-import 'util.dart';
 import 'survey01_forms/survey01_export.dart';
 
 class SurveyScreen extends StatefulWidget {
@@ -15,7 +13,7 @@ class SurveyScreen extends StatefulWidget {
   _SurveyScreenState createState() => _SurveyScreenState();
 }
 
-class _SurveyScreenState extends State<SurveyScreen> {
+class _SurveyScreenState extends State<SurveyScreen> with SingleTickerProviderStateMixin {
   List<Widget> tabViews = [];
   List<String> tabTitles = [];
 
@@ -23,58 +21,29 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   @override
   void initState() {
-    switch (widget.surveyNumber) {
-      // -------------- Survey 01 --------------
-      case 1:
-        tabViews = [
-          const S01InspectorDetailsForm(),
-          const S01HazardForm(),
-          const S01GroundShakingForm(),
-          const S01ExposureForm(),
-          const S01VulnerabilityForm(),
-          const S01SubmitForm(),
-        ];
-        tabTitles = [
-          "Inspector Details",
-          "Collateral Hazard",
-          "Ground Shaking",
-          "Exposure",
-          "Vulnerability",
-          "Submit",
-        ];
-        break;
-      // -------------- Survey 02 --------------
-      case 2:
-        tabViews = [
-          const S01InspectorDetailsForm(),
-          const S01HazardForm(),
-          const S01GroundShakingForm(),
-          const S01ExposureForm(),
-          const S01VulnerabilityForm(),
-          const S01SubmitForm(),
-        ];
-        tabTitles = [
-          "Inspector Details",
-          "Collateral Hazard",
-          "Ground Shaking",
-          "Exposure",
-          "Vulnerability",
-          "Submit",
-        ];
-        break;
-      // -------------- Survey 03 --------------
-      case 3:
-        tabViews = [];
-        tabTitles = [];
-        break;
-      default:
-    }
+    tabViews = [
+      const S01InspectorDetailsForm(),
+      const S01HazardForm(),
+      const S01GroundShakingForm(),
+      const S01ExposureForm(),
+      const S01VulnerabilityForm(),
+      const S01SubmitForm(),
+    ];
+    tabTitles = [
+      "Inspector Details",
+      "Collateral Hazard",
+      "Ground Shaking",
+      "Exposure",
+      "Vulnerability",
+      "Submit",
+    ];
 
     tabs = List.generate(tabViews.length, (index) {
       return Tab(
         text: tabTitles[index],
       );
     });
+
     super.initState();
   }
 
@@ -90,35 +59,27 @@ class _SurveyScreenState extends State<SurveyScreen> {
       },
       child: DefaultTabController(
         length: tabs.length,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text("EDRI - ${surveyTitles[widget.surveyNumber]}"),
-            // actions: [
-            //   IconButton(
-            //     onPressed: () {
-            //       FirebaseAuth auth = FirebaseAuth.instance;
-            //       auth.signOut();
-            //       Fluttertoast.showToast(msg: "Signed Out.");
-            //       Navigator.pushReplacementNamed(context, "/login");
-            //     },
-            //     icon: const Icon(Icons.logout_rounded),
-            //   ),
-            // ],
-            bottom: TabBar(
-              isScrollable: true,
-              tabs: tabs,
+        child: Builder(builder: (context) {
+          // close keyboard on tab change
+          final TabController tabController = DefaultTabController.of(context)!;
+          tabController.addListener(() {
+            FocusManager.instance.primaryFocus?.unfocus();
+          });
+
+          // build
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("EDRI - ${surveyTitles[widget.surveyNumber]}"),
+              bottom: TabBar(
+                isScrollable: true,
+                tabs: tabs,
+              ),
             ),
-          ),
-          body: TabBarView(
-            children: tabViews,
-          ),
-          // floatingActionButton: FloatingActionButton(
-          //   child: Icon(Icons.save),
-          //   onPressed: () {
-          //     GetIt.I<Survey01Data>().testPrint();
-          //   },
-          // ),
-        ),
+            body: TabBarView(
+              children: tabViews,
+            ),
+          );
+        }),
       ),
     );
   }

@@ -30,13 +30,6 @@ bool isDarkTheme(BuildContext context) {
   }
 }
 
-const List<String> surveyTitles = [
-  "Survey 00",
-  "Reinforced Concrete",
-  "Brick Masonry",
-  "Brick Masonry Other Roof",
-];
-
 class Pair<T1, T2> {
   T1 a;
   T2 b;

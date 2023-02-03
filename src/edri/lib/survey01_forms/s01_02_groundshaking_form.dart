@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path_provider/path_provider.dart';
 import '../camera_screen.dart';
@@ -146,8 +147,12 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
   // -------------------------------------- Views Of Structure --------------------------------------
   //
   void takeStructureViewPicture(int index) async {
-    final File imgFile = await Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraPage()));
+    final File? imgFile = await Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraPage()));
     Directory appDocDir = await getApplicationDocumentsDirectory();
+    if (imgFile == null) {
+      Fluttertoast.showToast(msg: "Did not save picture");
+      return;
+    }
     await imgFile.copy("${appDocDir.path}/StructureView${index.toString()}");
 
     GetIt.I<Survey01Data>().picturesTaken[index] = true;
