@@ -147,12 +147,25 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
   // -------------------------------------- Views Of Structure --------------------------------------
   //
   void takeStructureViewPicture(int index) async {
-    final File? imgFile = await Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraPage()));
-    Directory appDocDir = await getApplicationDocumentsDirectory();
+    File? imgFile;
+    try {
+      imgFile = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CameraPage(),
+        ),
+      ).catchError((e) {
+        Fluttertoast.showToast(msg: "Could not take picture");
+      });
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not take picture");
+      return;
+    }
     if (imgFile == null) {
       Fluttertoast.showToast(msg: "Did not save picture");
       return;
     }
+    Directory appDocDir = await getApplicationDocumentsDirectory();
     await imgFile.copy("${appDocDir.path}/StructureView${index.toString()}");
 
     GetIt.I<Survey01Data>().picturesTaken[index] = true;

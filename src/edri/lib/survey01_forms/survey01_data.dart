@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path_provider/path_provider.dart';
-import '../vulnerability_data.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -130,16 +129,14 @@ class Survey01Data {
     //
     //----------------------------- Vulnerability -----------------------------
     //
-    List<vuln.VulnElement> ecoElements =
-        vuln.getFormVulnElements(vuln.possibleEconomic, ecoVulnElementMask[surveyNumber]);
+    List<vuln.VulnElement> ecoElements = vuln.getFormVulnElements(vuln.possibleEconomic, surveyNumber);
     String selectedEco = "";
     for (int i = 0; i < ecoElements.length; i++) {
       if (ecoCheckboxes[i] && ecoElements[i].runtimeType == vuln.VulnQuestion) {
         selectedEco += "> ${ecoElements[i].text}\n";
       }
     }
-    List<vuln.VulnElement> lifeElements =
-        vuln.getFormVulnElements(vuln.possibleLifeThreatening, lifeVulnElementMask[surveyNumber]);
+    List<vuln.VulnElement> lifeElements = vuln.getFormVulnElements(vuln.possibleLifeThreatening, surveyNumber);
     String selectedLife = "";
     for (int i = 0; i < lifeElements.length; i++) {
       if (lifeCheckboxes[i] && lifeElements[i].runtimeType == vuln.VulnQuestion) {
@@ -147,8 +144,8 @@ class Survey01Data {
       }
     }
 
-    double isLifeThreateningVal = vuln.isLifeThreatening(lifeCheckboxes, lifeVulnElementMask[surveyNumber]);
-    double economicLossVal = vuln.economicLoss(ecoCheckboxes, ecoVulnElementMask[surveyNumber]);
+    double isLifeThreateningVal = vuln.isLifeThreatening(lifeCheckboxes, surveyNumber);
+    double economicLossVal = vuln.economicLoss(ecoCheckboxes, surveyNumber);
 
     //
     //----------------------------- Total EDRI -----------------------------
