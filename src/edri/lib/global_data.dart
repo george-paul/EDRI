@@ -5,6 +5,6 @@ class GlobalData {
 
 const List<String> surveyTitles = [
   "Reinforced Concrete",
-  "Brick Masonry",
+  "Brick Masonry Concrete Roof",
   "Brick Masonry Other Roof",
 ];

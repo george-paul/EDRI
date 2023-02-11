@@ -23,7 +23,6 @@ class _SurveyScreenState extends State<SurveyScreen> with SingleTickerProviderSt
   void initState() {
     tabViews = [
       const S01InspectorDetailsForm(),
-      const S01HazardForm(),
       const S01GroundShakingForm(),
       const S01ExposureForm(),
       const S01VulnerabilityForm(),
@@ -31,8 +30,7 @@ class _SurveyScreenState extends State<SurveyScreen> with SingleTickerProviderSt
     ];
     tabTitles = [
       "Inspector Details",
-      "Collateral Hazard",
-      "Ground Shaking",
+      "Hazard",
       "Exposure",
       "Vulnerability",
       "Submit",

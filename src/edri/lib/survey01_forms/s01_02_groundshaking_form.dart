@@ -24,6 +24,64 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
   static const BorderRadius borderRadiusCached = BorderRadius.all(Radius.circular(20.0));
 
   //
+  // -------------------------------------- Collateral Damage --------------------------------------
+  //
+
+  List<Pair<bool, String>> hazardOptions = [
+    Pair(false, "Liquefaction"),
+    Pair(false, "Rockfall"),
+    Pair(false, "Fire"),
+    Pair(false, "Landslide"),
+  ];
+  String selectedHazards = "None Selected";
+
+  void setSelectedHazards() {
+    selectedHazards = "";
+    for (var opt in hazardOptions) {
+      if (opt.a) {
+        selectedHazards += "${opt.b}, ";
+      }
+    }
+    if (selectedHazards.length > 2) {
+      selectedHazards = selectedHazards.substring(0, selectedHazards.length - 2);
+    } else {
+      selectedHazards = "None Selected";
+    }
+  }
+
+  ExpansionTileCard buildCollatDamageSelector(BuildContext context) {
+    return ExpansionTileCard(
+      borderRadius: 20,
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        tilePadding: const EdgeInsets.all(20),
+        title: Text(
+          "Collateral Damage",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        subtitle: Text(
+          selectedHazards,
+          style: Theme.of(context).textTheme.bodyText2,
+        ),
+        children: List.generate(hazardOptions.length, (index) {
+          return CheckboxListTile(
+            title: Text(hazardOptions[index].b),
+            value: hazardOptions[index].a,
+            onChanged: (val) {
+              GetIt.I<Survey01Data>().hazardOptions[index] = val ?? false;
+              setState(() {
+                hazardOptions[index].a = val ?? false;
+                setSelectedHazards();
+                GetIt.I<Survey01Data>().selectedHazards = selectedHazards;
+              });
+            },
+          );
+        }),
+      ),
+    );
+  }
+
+  //
   // -------------------------------------- Zone Factor --------------------------------------
   //
   List<Pair<bool, String>> zoneFactorOptions = [
@@ -268,6 +326,15 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            buildCollatDamageSelector(context),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10.0, 40.0, 20.0, 20.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Ground Shaking", style: Theme.of(context).textTheme.headline5),
+              ),
+            ),
             buildZoneFactor(),
             const SizedBox(height: 20),
             buildSoilType(),

@@ -15,12 +15,11 @@ class Survey01Data {
   String inspID = "";
   String inspDate = "";
   String inspTime = "";
-
-  // form 01
-  List<bool> hazardOptions = [false, false, false, false];
-  String selectedHazards = "None";
+  String coords = "";
 
   // form 02
+  List<bool> hazardOptions = [false, false, false, false];
+  String selectedHazards = "None";
   int zoneFactor = -1;
   int soilType = -1;
   int numberOfStoreys = -1;
@@ -55,20 +54,14 @@ class Survey01Data {
     greenDBG(fsiAllowable.toString());
   }
 
-  pw.BoxDecoration borderBoxDecoration(int color, double width) {
-    return pw.BoxDecoration(
-      border: pw.TableBorder(
-        top: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
-        bottom: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
-        left: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
-        right: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
-      ),
-    );
-  }
-
   void calcEDRI() async {
     const precisionDigits = 3;
     final surveyNumber = GetIt.I<GlobalData>().surveyNumber;
+
+    if (coords == "") {
+      Fluttertoast.showToast(msg: "Invalid GPS Coordinates");
+      return;
+    }
 
     //
     //----------------------------- Hazard -----------------------------
@@ -168,7 +161,7 @@ class Survey01Data {
     final pageTheme = pw.PageTheme(
       buildBackground: ((context) {
         return pw.Watermark.text(
-          "Rapid Visual Screening",
+          "Earthquake Disaster Risk Index",
           style: pw.TextStyle.defaultStyle().copyWith(color: const PdfColor.fromInt(0x00dbdbdb)),
         );
       }),
@@ -179,7 +172,7 @@ class Survey01Data {
           fontSize: 24,
         ),
         header2: pw.TextStyle(
-          font: pw.Font.helveticaOblique(),
+          font: pw.Font.helveticaBold(),
           fontSize: 15,
         ),
         header5: pw.TextStyle(
@@ -218,53 +211,88 @@ class Survey01Data {
                     style: pw.Theme.of(context).header5,
                   ),
                 ),
+
                 pw.SizedBox(height: 50),
                 pw.Table.fromTextArray(
-                  border: null,
-                  headerDecoration: pw.BoxDecoration(
-                    color: PdfColor.fromInt(0x05ad7863),
-                    border: borderBoxDecoration(0xff000000, 1.0).border,
-                  ),
-                  headerStyle: pw.Theme.of(context).defaultTextStyle.copyWith(fontWeight: pw.FontWeight.bold),
+                  headerCount: 0,
+                  data: [
+                    ["Building GPS Coordinates", coords],
+                  ],
+                ),
+
+                pw.SizedBox(height: 30),
+                pdfSubheading("Hazard", context),
+                pw.SizedBox(height: 20),
+                pw.Table.fromTextArray(
+                  headerCount: 0,
                   cellDecoration: (index, data, rowNum) {
-                    if (rowNum == 1 && index == 1) {
+                    if (rowNum == 0 && index == 1) {
                       // Possible Collateral Damage
                       if (selectedHazards != "None") {
                         int red = Colors.red.shade400.value;
-                        return borderBoxDecoration(red, 3.0);
-                      }
-                    }
-                    if (rowNum == 9 && index == 1) {
-                      // Life Threatening
-                      if (lifeThreateningCountVal > 0) {
-                        int red = Colors.red.shade400.value;
-                        return borderBoxDecoration(red, 3.0);
+                        return borderBoxDecoration(red, 4.0);
                       }
                     }
                     // default style
                     return borderBoxDecoration(0xff000000, 1.0);
                   },
                   data: [
-                    /*  0 */ ["Specification", "Value"],
-                    /*  1 */ [
-                      "Possible Collateral Damage (The presence of these is a cause for concern)",
-                      selectedHazards
-                    ],
-                    /*  2 */ ["Seismic Zone", stringZoneFactor],
-                    /*  3 */ ["Soil Type", stringSoilType],
-                    /*  4 */ ["Number of Storeys", numberOfStoreys.toString()],
-                    /*  5 */ ["Spectral Shape", valSpectral.toString()],
-                    /*  6 */ ["Structure Importance", importance.toString()],
-                    /*  7 */ ["Floor Space Index of the Structure (FSI)", fsi.toString()],
-                    /*  8 */ ["Economic Loss Factors", (selectedEco == "") ? "None" : selectedEco],
-                    /*  9 */ [
-                      "Life Threatening Factors (The presence of these is cause for concern)",
-                      (selectedLife == "") ? "None" : selectedLife
-                    ],
-                    /* 10 */ ["Actual Risk", actualRisk.toStringAsFixed(precisionDigits)],
-                    /* 11 */ ["Allowable Risk", allowableRisk.toStringAsFixed(precisionDigits)],
-                    /* 12 */ ["Risk Value", riskValue.toStringAsFixed(precisionDigits)],
+                    ["Possible Collateral Damage \n(The presence of these is a cause for concern)", selectedHazards],
+                    ["Seismic Zone", stringZoneFactor],
+                    ["Soil Type", stringSoilType],
+                    ["Number of Storeys", numberOfStoreys.toString()],
+                    ["Spectral Shape", valSpectral.toString()],
                   ],
+                ),
+
+                pw.SizedBox(height: 30),
+                pdfSubheading("Exposure", context),
+                pw.SizedBox(height: 20),
+                pw.Table.fromTextArray(
+                  headerCount: 0,
+                  data: [
+                    ["Structure Importance", importance.toString()],
+                    ["Floor Space Index of the Structure (FSI)", fsi.toString()],
+                    ["Allowable Floor Space Index of the Structure (FSI)", fsiAllowable.toString()],
+                  ],
+                ),
+
+                pw.SizedBox(height: 20),
+                pdfSubheading("Economic Loss Factors", context),
+                pw.SizedBox(height: 20),
+                pw.Text((selectedEco == "") ? "None" : selectedEco),
+
+                pw.SizedBox(height: 30),
+                pdfSubheading("Life Threatening Factors", context),
+                pw.SizedBox(height: 20),
+                pw.Container(
+                  child: pw.Padding(
+                    padding: const pw.EdgeInsets.all(10),
+                    child: pw.Text((selectedLife != "") ? selectedEco : "None"),
+                  ),
+                  decoration: (selectedLife != "") ? borderBoxDecoration(red, 2.0) : null,
+                ),
+
+                pw.SizedBox(height: 30),
+                pdfSubheading("Risk Values", context),
+                pw.SizedBox(height: 20),
+                pw.Table.fromTextArray(
+                  headerCount: 0,
+                  data: [
+                    ["Actual Risk", actualRisk.toStringAsFixed(precisionDigits)],
+                    ["Allowable Risk", allowableRisk.toStringAsFixed(precisionDigits)],
+                  ],
+                ),
+                pw.SizedBox(height: 30),
+                pw.Align(
+                  alignment: pw.Alignment.centerLeft,
+                  child: pw.Text(
+                    "Risk Value: ${riskValue.toStringAsFixed(precisionDigits)}",
+                    style: pw.TextStyle(
+                      font: pw.Font.helveticaOblique(),
+                      fontSize: 20,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -313,5 +341,29 @@ class Survey01Data {
     await file.writeAsBytes(await pdf.save());
 
     Fluttertoast.showToast(msg: "Generated PDF at Downloads");
+  }
+
+  final red = Colors.red.shade400.value;
+
+  pw.BoxDecoration borderBoxDecoration(int color, double width) {
+    return pw.BoxDecoration(
+      border: pw.TableBorder(
+        top: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
+        bottom: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
+        left: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
+        right: pw.BorderSide(color: PdfColor.fromInt(color), width: width),
+      ),
+    );
+  }
+
+  pw.Align pdfSubheading(String text, pw.Context context) {
+    return pw.Align(
+      alignment: pw.Alignment.centerLeft,
+      child: pw.Text(
+        text,
+        textAlign: pw.TextAlign.left,
+        style: pw.Theme.of(context).header2,
+      ),
+    );
   }
 }
