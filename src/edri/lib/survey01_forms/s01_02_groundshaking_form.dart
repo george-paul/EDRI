@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import '../camera_screen.dart';
 import '../util.dart';
 
 class S01GroundShakingForm extends StatefulWidget {
@@ -204,32 +204,56 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
   //
   // -------------------------------------- Views Of Structure --------------------------------------
   //
-  void takeStructureViewPicture(int index) async {
-    File? imgFile;
-    try {
-      imgFile = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const CameraPage(),
-        ),
-      ).catchError((e) {
-        Fluttertoast.showToast(msg: "Could not take picture");
-      });
-    } catch (e) {
-      Fluttertoast.showToast(msg: "Could not take picture");
-      return;
-    }
-    if (imgFile == null) {
-      Fluttertoast.showToast(msg: "Did not save picture");
-      return;
-    }
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    await imgFile.copy("${appDocDir.path}/StructureView${index.toString()}");
 
-    GetIt.I<Survey01Data>().picturesTaken[index] = true;
-    setState(() {
-      hasTakenPicture[index] = true;
-    });
+  // call with index == -1 to take an extra picture
+  void takeStructureViewPicture(int index) async {
+    if (index == -1) {
+      index = extraPictureNumber + 3 + 1;
+    }
+    final XFile? xImg = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (xImg == null) {
+      Fluttertoast.showToast(msg: "Could not take image");
+      return;
+    }
+    // Directory saveDir = await Directory('/storage/emulated/0/Download/RVSreports').create();
+    Directory saveDir = await getApplicationDocumentsDirectory();
+    saveDir = await Directory("${saveDir.path}/Views").create();
+
+    // get a label
+    String fileLabel = "";
+    switch (index) {
+      case 0:
+        fileLabel = "Front";
+        break;
+      case 1:
+        fileLabel = "Left";
+        break;
+      case 2:
+        fileLabel = "Right";
+        break;
+      case 3:
+        fileLabel = "Back";
+        break;
+      default:
+        fileLabel = index.toString();
+    }
+
+    File file = await File("${saveDir.path}/StructureView$fileLabel.png").create();
+    await file.writeAsBytes(await xImg.readAsBytes());
+
+    if (index <= 3) {
+      GetIt.I<Survey01Data>().picturesTaken[index] = true;
+      setState(() {
+        hasTakenPicture[index] = true;
+      });
+    } else {
+      // extra picture
+      GetIt.I<Survey01Data>().extraPicturesNumber++;
+      setState(() {
+        extraPictureNumber++;
+      });
+    }
+    // List<FileSystemEntity> files = saveDir.listSync();
   }
 
   Widget cameraButtonIcon({required bool isTicked}) {
@@ -251,7 +275,7 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
     );
   }
 
-  //--------------------------    T      L      R      B
+  //                              T      L      R      B
   List<bool> hasTakenPicture = [false, false, false, false];
 
   Widget buildViewsOfStructure() {
@@ -318,6 +342,46 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
     );
   }
 
+  //
+  // -------------------------------------- Extra Pictures --------------------------------------
+  //
+
+  int extraPictureNumber = 0;
+
+  Widget buildExtraPictures() {
+    return Card(
+      shape: const RoundedRectangleBorder(borderRadius: borderRadiusCached),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Text("Number of extra views added: ", style: Theme.of(context).textTheme.headline6),
+                ),
+                const SizedBox(width: 20),
+                Text(extraPictureNumber.toString(), style: Theme.of(context).textTheme.headline6),
+                const SizedBox(width: 60),
+                FloatingActionButton(
+                  onPressed: () {
+                    takeStructureViewPicture(-1);
+                  },
+                  child: const Icon(Icons.camera_enhance_rounded),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  //
+  // -------------------------------------- Build --------------------------------------
+  //
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -343,6 +407,7 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
             const SizedBox(height: 20),
             buildViewsOfStructure(),
             const SizedBox(height: 20),
+            buildExtraPictures(),
           ],
         ),
       ),

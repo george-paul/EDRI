@@ -6,6 +6,7 @@ import 'package:edri/vulnerability_data.dart' as vuln;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -24,6 +25,7 @@ class Survey01Data {
   int soilType = -1;
   int numberOfStoreys = -1;
   List<bool> picturesTaken = [false, false, false, false];
+  int extraPicturesNumber = 0;
 
   // form 03
   int importance = -1;
@@ -334,13 +336,28 @@ class Survey01Data {
     //
     //----------------------------- Save PDF -----------------------------
     //
-    String timeString = DateTime.now().toIso8601String().substring(0, 19).replaceAll(RegExp(r"\D"), "");
+    String timeString = "$inspDate$inspTime".replaceAll(RegExp(r"\D"), "");
 
-    Directory saveDir = await Directory('/storage/emulated/0/Download/EDRIreports').create();
-    File file = await File('${saveDir.path}/${timeString}_EDRIReport.pdf').create();
+    Directory saveDir = await Directory("/storage/emulated/0/Download/EDRIreports").create();
+    File file = await File("${saveDir.path}/${timeString}_EDRIReport.pdf").create();
     await file.writeAsBytes(await pdf.save());
 
-    Fluttertoast.showToast(msg: "Generated PDF at Downloads");
+    //
+    //----------------------------- Save Images -----------------------------
+    //
+    Directory viewsDir = await getApplicationDocumentsDirectory();
+    viewsDir = Directory("${viewsDir.path}/Views");
+    List<FileSystemEntity> files = viewsDir.listSync();
+    for (FileSystemEntity file in files) {
+      int substringCutIndex = file.path.indexOf(RegExp(r"StructureView"));
+      if (substringCutIndex != -1) {
+        file = file as File;
+        await file.copy("${saveDir.path}/${timeString}_${file.path.substring(substringCutIndex)}");
+        file.deleteSync();
+      }
+    }
+
+    Fluttertoast.showToast(msg: "Generated results at Downloads");
   }
 
   final red = Colors.red.shade400.value;
