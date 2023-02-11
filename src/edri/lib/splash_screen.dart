@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Navigator.pushReplacementNamed(context, (auth.currentUser == null) ? "/login_screen" : "/survey_selection");
           },
           child: Container(
-            color: Theme.of(context).primaryColor,
+            color: Colors.deepOrange.shade300,
             child: Column(
               children: [
                 const Spacer(flex: 4),

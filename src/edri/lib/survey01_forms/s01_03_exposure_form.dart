@@ -33,7 +33,7 @@ class _S01ExposureFormState extends State<S01ExposureForm> with AutomaticKeepAli
       child: ExpansionTile(
         tilePadding: const EdgeInsets.all(20),
         title: Text(
-          "Importance",
+          "Importance Factor",
           style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
@@ -86,7 +86,6 @@ class _S01ExposureFormState extends State<S01ExposureForm> with AutomaticKeepAli
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "Enter a number",
               ),
               controller: fsiCtl,
             ),
@@ -126,7 +125,6 @@ class _S01ExposureFormState extends State<S01ExposureForm> with AutomaticKeepAli
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "Enter a number",
               ),
               controller: fsiAllowableCtl,
             ),
