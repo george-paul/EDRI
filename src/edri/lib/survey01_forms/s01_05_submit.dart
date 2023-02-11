@@ -27,36 +27,42 @@ class _S01SubmitFormState extends State<S01SubmitForm> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: [
-          Spacer(),
-          Text("Generate your report with this button: "),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              // setState(() {
-              //   isLoading = true;
-              // });
-              generatePDF();
-            },
-            child: Visibility(
-              visible: isLoading,
-              replacement: Text("Generate"),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-                child: SizedBox(
-                  height: Theme.of(context).textTheme.labelLarge?.fontSize,
-                  width: Theme.of(context).textTheme.labelLarge?.fontSize,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.0,
-                    color: (!isDarkTheme(context)) ? Colors.white : Colors.black,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Spacer(),
+            Text(
+              "Generate your report with this button: ",
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                // setState(() {
+                //   isLoading = true;
+                // });
+                generatePDF();
+              },
+              child: Visibility(
+                visible: isLoading,
+                replacement: Text("Generate"),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+                  child: SizedBox(
+                    height: Theme.of(context).textTheme.labelLarge?.fontSize,
+                    width: Theme.of(context).textTheme.labelLarge?.fontSize,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.0,
+                      color: (!isDarkTheme(context)) ? Colors.white : Colors.black,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Spacer(),
-        ],
+            Spacer(),
+          ],
+        ),
       ),
     );
   }

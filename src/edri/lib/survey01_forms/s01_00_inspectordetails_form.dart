@@ -84,6 +84,7 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
           width: Theme.of(context).textTheme.button!.fontSize,
           height: Theme.of(context).textTheme.button!.fontSize,
           child: CircularProgressIndicator(
+            strokeWidth: 2.0,
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),

@@ -90,25 +90,6 @@ class Survey01Data {
     double hazardVal = valZone * valSoilType * valSpectral;
 
     //
-    //----------------------------- Structure Views -----------------------------
-    //
-
-    // if (picturesTaken.any((element) => !element)) {
-    //   Fluttertoast.showToast(msg: "Complete structure view photographs");
-    //   return;
-    // }
-
-    // Directory appDocDir = await getApplicationDocumentsDirectory();
-    // final topImage = await File("${appDocDir.path}/StructureView${0.toString()}").readAsBytes();
-    // final topView = pw.MemoryImage(topImage);
-    // final leftImage = await File("${appDocDir.path}/StructureView${1.toString()}").readAsBytes();
-    // final leftView = pw.MemoryImage(leftImage);
-    // final rightImage = await File("${appDocDir.path}/StructureView${2.toString()}").readAsBytes();
-    // final rightView = pw.MemoryImage(rightImage);
-    // final bottomImage = await File("${appDocDir.path}/StructureView${3.toString()}").readAsBytes();
-    // final bottomView = pw.MemoryImage(bottomImage);
-
-    //
     //----------------------------- Exposure -----------------------------
     //
 
@@ -204,7 +185,6 @@ class Survey01Data {
                     style: pw.Theme.of(context).header1,
                   ),
                 ),
-                // pw.SizedBox(height: 20),
                 pw.Align(
                   alignment: pw.Alignment.center,
                   child: pw.Text(
@@ -213,7 +193,6 @@ class Survey01Data {
                     style: pw.Theme.of(context).header5,
                   ),
                 ),
-
                 pw.SizedBox(height: 50),
                 pw.Table.fromTextArray(
                   headerCount: 0,
@@ -221,10 +200,9 @@ class Survey01Data {
                     ["Building GPS Coordinates", coords],
                   ],
                 ),
-
                 pw.SizedBox(height: 30),
                 pdfSubheading("Hazard", context),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   cellDecoration: (index, data, rowNum) {
@@ -246,10 +224,9 @@ class Survey01Data {
                     ["Spectral Shape", valSpectral.toString()],
                   ],
                 ),
-
                 pw.SizedBox(height: 30),
                 pdfSubheading("Exposure", context),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   data: [
@@ -258,15 +235,13 @@ class Survey01Data {
                     ["Allowable Floor Space Index of the Structure (FSI)", fsiAllowable.toString()],
                   ],
                 ),
-
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 30),
                 pdfSubheading("Economic Loss Factors", context),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
                 pw.Text((selectedEco == "") ? "None" : selectedEco),
-
                 pw.SizedBox(height: 30),
                 pdfSubheading("Life Threatening Factors", context),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
                 pw.Container(
                   child: pw.Padding(
                     padding: const pw.EdgeInsets.all(10),
@@ -274,10 +249,9 @@ class Survey01Data {
                   ),
                   decoration: (selectedLife != "") ? borderBoxDecoration(red, 2.0) : null,
                 ),
-
                 pw.SizedBox(height: 30),
                 pdfSubheading("Risk Values", context),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   data: [
@@ -302,36 +276,6 @@ class Survey01Data {
         },
       ),
     );
-
-    // ------------------------------------- structure views -------------------------------------
-    // pdf.addPage(
-    //   pw.Page(
-    //     pageTheme: pageTheme,
-    //     build: (pw.Context context) {
-    //       return pw.Column(
-    //         children: [
-    //           pw.Text("Structure Views: ", style: pw.Theme.of(context).header2),
-    //           pw.Expanded(
-    //             child: pw.GridView(
-    //               crossAxisCount: 3,
-    //               children: [
-    //                 pw.Container(width: 100),
-    //                 pw.Image(topView, width: 100),
-    //                 pw.Container(width: 100),
-    //                 pw.Image(leftView, width: 100),
-    //                 pw.Container(width: 100),
-    //                 pw.Image(rightView, width: 100),
-    //                 pw.Container(width: 100),
-    //                 pw.Image(bottomView, width: 100),
-    //                 pw.Container(width: 100),
-    //               ],
-    //             ),
-    //           ),
-    //         ],
-    //       );
-    //     },
-    //   ),
-    // );
 
     //
     //----------------------------- Save PDF -----------------------------
