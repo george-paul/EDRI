@@ -85,6 +85,12 @@ class Survey01Data {
     double valSoilType = List.of(<double>[1.0, 1.33, 1.67])[soilType];
     final stringSoilType = List.of(<String>["Hard Soil", "Medium Soil", "Soft Soil"])[soilType];
 
+    // check structure views
+    if (picturesTaken.contains(false)) {
+      Fluttertoast.showToast(msg: "Complete the structure view photographs");
+      return;
+    }
+
     double valSpectral = min(20 / numberOfStoreys, 2.5);
 
     double hazardVal = valZone * valSoilType * valSpectral;
@@ -129,10 +135,10 @@ class Survey01Data {
     //
 
     double actualRisk = hazardVal * exposureVal * economicLossVal;
-    exposureVal = valImp * fsiAllowable;
-    double allowableRisk = hazardVal * exposureVal * 1;
+    double allowableExposureVal = valImp * fsiAllowable;
+    double allowableRisk = hazardVal * allowableExposureVal * 1;
     double riskValue;
-    if (lifeThreateningCountVal > 0) {
+    if (lifeThreateningCountVal > 0 || selectedHazards != "None") {
       riskValue = 1;
     } else {
       riskValue = actualRisk / allowableRisk;
@@ -197,6 +203,7 @@ class Survey01Data {
                 pw.Table.fromTextArray(
                   headerCount: 0,
                   data: [
+                    ["Building Type", surveyTitles[surveyNumber]],
                     ["Building GPS Coordinates", coords],
                   ],
                 ),
@@ -236,18 +243,21 @@ class Survey01Data {
                   ],
                 ),
                 pw.SizedBox(height: 30),
-                pdfSubheading("Economic Loss Factors", context),
+                pdfSubheading("Economic Loss Inducing Factors", context),
                 pw.SizedBox(height: 10),
-                pw.Text((selectedEco == "") ? "None" : selectedEco),
+                pw.Padding(
+                  padding: pw.EdgeInsets.all(10),
+                  child: pw.Text((selectedEco == "") ? "None" : selectedEco),
+                ),
                 pw.SizedBox(height: 30),
                 pdfSubheading("Life Threatening Factors", context),
                 pw.SizedBox(height: 10),
                 pw.Container(
                   child: pw.Padding(
                     padding: const pw.EdgeInsets.all(10),
-                    child: pw.Text((selectedLife != "") ? selectedEco : "None"),
+                    child: pw.Text(selectedLife),
                   ),
-                  decoration: (selectedLife != "") ? borderBoxDecoration(red, 2.0) : null,
+                  decoration: (selectedLife != "None") ? borderBoxDecoration(red, 2.0) : null,
                 ),
                 pw.SizedBox(height: 30),
                 pdfSubheading("Risk Values", context),

@@ -45,7 +45,7 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
     if (selectedHazards.length > 2) {
       selectedHazards = selectedHazards.substring(0, selectedHazards.length - 2);
     } else {
-      selectedHazards = "None Selected";
+      selectedHazards = "None";
     }
   }
 
