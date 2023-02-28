@@ -38,11 +38,11 @@ dependencies:
   firebase_core: ^1.22.0
   firebase_auth: ^3.9.0
   fluttertoast: ^8.0.9
-  path_provider: ^2.0.11
   get_it: ^7.2.0
   pdf: ^3.8.4
   location: ^4.4.0
   image_picker: ^0.8.6+1
+  archive: ^3.3.6
 
 dev_dependencies:
   flutter_test:

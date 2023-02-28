@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:edri/global_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path_provider/path_provider.dart';
 import 'survey01_forms/survey01_export.dart';
 
 class SurveyScreen extends StatefulWidget {
@@ -22,17 +19,17 @@ class _SurveyScreenState extends State<SurveyScreen> with SingleTickerProviderSt
 
   List<Tab> tabs = [];
 
-  Future<void> clearViewsDirectory() async {
-    Directory viewsDir = await getApplicationDocumentsDirectory();
-    viewsDir = Directory("${viewsDir.path}/Views");
-    if (!(await viewsDir.exists())) {
-      return;
-    }
-    List<FileSystemEntity> files = viewsDir.listSync();
-    for (FileSystemEntity file in files) {
-      file.deleteSync();
-    }
-  }
+  // Future<void> clearViewsDirectory() async {
+  //   Directory viewsDir = await getApplicationDocumentsDirectory();
+  //   viewsDir = Directory("${viewsDir.path}/Views");
+  //   if (!(await viewsDir.exists())) {
+  //     return;
+  //   }
+  //   List<FileSystemEntity> files = viewsDir.listSync();
+  //   for (FileSystemEntity file in files) {
+  //     file.deleteSync();
+  //   }
+  // }
 
   @override
   void initState() {
@@ -57,7 +54,7 @@ class _SurveyScreenState extends State<SurveyScreen> with SingleTickerProviderSt
       );
     });
 
-    clearViewsDirectory();
+    // clearViewsDirectory();
     super.initState();
   }
 

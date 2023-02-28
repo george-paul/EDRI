@@ -1,5 +1,6 @@
 import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import '../util.dart';
 
@@ -62,7 +63,6 @@ class _S01ExposureFormState extends State<S01ExposureForm> with AutomaticKeepAli
   //
   TextEditingController fsiCtl = TextEditingController();
 
-  // TODO: deal with inability to parseint
   Widget buildFSIField() {
     return Card(
       shape: const RoundedRectangleBorder(borderRadius: borderRadiusCached),
@@ -77,6 +77,7 @@ class _S01ExposureFormState extends State<S01ExposureForm> with AutomaticKeepAli
             ),
             const SizedBox(height: 15),
             TextField(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               onChanged: (val) {
                 double? parsed = double.tryParse(val);
                 if (parsed != null) {
@@ -100,7 +101,6 @@ class _S01ExposureFormState extends State<S01ExposureForm> with AutomaticKeepAli
   //
   TextEditingController fsiAllowableCtl = TextEditingController();
 
-  // TODO: deal with inability to parseint
   Widget buildFSIAllowableField() {
     return Card(
       shape: const RoundedRectangleBorder(borderRadius: borderRadiusCached),
@@ -115,6 +115,7 @@ class _S01ExposureFormState extends State<S01ExposureForm> with AutomaticKeepAli
             ),
             const SizedBox(height: 15),
             TextField(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               onChanged: (val) {
                 double? parsed = double.tryParse(val);
                 if (parsed != null) {

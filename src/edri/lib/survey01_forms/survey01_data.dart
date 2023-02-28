@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:archive/archive.dart';
 import 'package:edri/global_data.dart';
 import 'package:edri/util.dart';
 import 'package:edri/vulnerability_data.dart' as vuln;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -26,6 +28,7 @@ class Survey01Data {
   int numberOfStoreys = -1;
   List<bool> picturesTaken = [false, false, false, false];
   int extraPicturesNumber = 0;
+  List<XFile?> pictures = [null, null, null, null];
 
   // form 03
   int importance = -1;
@@ -38,23 +41,6 @@ class Survey01Data {
 
   // form 05
   // bool isLoading = false;
-
-  void testPrint() {
-    greenDBG(inspID);
-    greenDBG(inspDate);
-    greenDBG(inspTime);
-    greenDBG("---");
-    greenDBG(hazardOptions.toString());
-    greenDBG("---");
-    greenDBG(zoneFactor.toString());
-    greenDBG(soilType.toString());
-    greenDBG(numberOfStoreys.toString());
-    greenDBG(picturesTaken.toString());
-    greenDBG("---");
-    greenDBG(importance.toString());
-    greenDBG(fsi.toString());
-    greenDBG(fsiAllowable.toString());
-  }
 
   void calcEDRI() async {
     const precisionDigits = 3;
@@ -246,7 +232,7 @@ class Survey01Data {
                 pdfSubheading("Economic Loss Inducing Factors", context),
                 pw.SizedBox(height: 10),
                 pw.Padding(
-                  padding: pw.EdgeInsets.all(10),
+                  padding: const pw.EdgeInsets.all(10),
                   child: pw.Text((selectedEco == "") ? "None" : selectedEco),
                 ),
                 pw.SizedBox(height: 30),
@@ -287,6 +273,14 @@ class Survey01Data {
       ),
     );
 
+    if (kIsWeb) {
+      saveResultsWeb(pdf);
+    } else if (Platform.isAndroid) {
+      saveResultsAndroid(pdf);
+    }
+  }
+
+  saveResultsAndroid(pw.Document pdf) async {
     //
     //----------------------------- Save PDF -----------------------------
     //
@@ -299,19 +293,70 @@ class Survey01Data {
     //
     //----------------------------- Save Images -----------------------------
     //
-    Directory viewsDir = await getApplicationDocumentsDirectory();
-    viewsDir = Directory("${viewsDir.path}/Views");
-    List<FileSystemEntity> files = viewsDir.listSync();
-    for (FileSystemEntity file in files) {
-      int substringCutIndex = file.path.indexOf(RegExp(r"StructureView"));
-      if (substringCutIndex != -1) {
-        file = file as File;
-        await file.copy("${saveDir.path}/${timeString}_${file.path.substring(substringCutIndex)}");
-        file.deleteSync();
+    for (int index = 0; index < pictures.length; index++) {
+      XFile xImg = pictures[index]!;
+      String fileLabel = "";
+      switch (index) {
+        case 0:
+          fileLabel = "Front";
+          break;
+        case 1:
+          fileLabel = "Left";
+          break;
+        case 2:
+          fileLabel = "Right";
+          break;
+        case 3:
+          fileLabel = "Back";
+          break;
+        default:
+          fileLabel = "Extra${index - 3}";
       }
+      File file = await File("${saveDir.path}/${timeString}_StructureView$fileLabel.png").create();
+      await file.writeAsBytes(await xImg.readAsBytes());
+    }
+    Fluttertoast.showToast(msg: "Generated results at Downloads");
+  }
+
+  saveResultsWeb(pw.Document pdf) async {
+    Archive archive = Archive();
+
+    //
+    //----------------------------- Save PDF -----------------------------
+    //
+    String timeString = "$inspDate$inspTime".replaceAll(RegExp(r"\D"), "");
+    Uint8List pdfBytes = await pdf.save();
+    archive.addFile(ArchiveFile("${timeString}_EDRIReport.pdf", pdfBytes.length, pdfBytes));
+
+    //
+    //----------------------------- Save Images -----------------------------
+    //
+    for (int index = 0; index < pictures.length; index++) {
+      XFile xImg = pictures[index]!;
+      String fileLabel = "";
+      switch (index) {
+        case 0:
+          fileLabel = "Front";
+          break;
+        case 1:
+          fileLabel = "Left";
+          break;
+        case 2:
+          fileLabel = "Right";
+          break;
+        case 3:
+          fileLabel = "Back";
+          break;
+        default:
+          fileLabel = "Extra${index - 3}";
+      }
+      Uint8List xImgBytes = await xImg.readAsBytes();
+      archive.addFile(ArchiveFile("${timeString}_StructureView$fileLabel.png", xImgBytes.length, xImgBytes));
     }
 
-    Fluttertoast.showToast(msg: "Generated results at Downloads");
+    Uint8List archiveBytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
+    triggerDownload(bytes: archiveBytes, downloadName: "${timeString}_EDRIReport.zip");
+    Fluttertoast.showToast(msg: "Generated results");
   }
 
   final red = Colors.red.shade400.value;

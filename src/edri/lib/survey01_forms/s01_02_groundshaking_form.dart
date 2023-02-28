@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:edri/survey01_forms/survey01_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import '../util.dart';
 
 class S01GroundShakingForm extends StatefulWidget {
@@ -207,39 +204,19 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
 
   // call with index == -1 to take an extra picture
   void takeStructureViewPicture(int index) async {
-    if (index == -1) {
-      index = extraPictureNumber + 3 + 1;
-    }
     final XFile? xImg = await ImagePicker().pickImage(source: ImageSource.camera);
     if (xImg == null) {
       Fluttertoast.showToast(msg: "Could not take image");
       return;
     }
-    // Directory saveDir = await Directory('/storage/emulated/0/Download/RVSreports').create();
-    Directory saveDir = await getApplicationDocumentsDirectory();
-    saveDir = await Directory("${saveDir.path}/Views").create();
 
-    // get a label
-    String fileLabel = "";
-    switch (index) {
-      case 0:
-        fileLabel = "Front";
-        break;
-      case 1:
-        fileLabel = "Left";
-        break;
-      case 2:
-        fileLabel = "Right";
-        break;
-      case 3:
-        fileLabel = "Back";
-        break;
-      default:
-        fileLabel = index.toString();
+    // for non FLRB pictures
+    if (index == -1) {
+      GetIt.I<Survey01Data>().pictures.add(null);
+      index = extraPictureNumber + 4;
     }
 
-    File file = await File("${saveDir.path}/StructureView$fileLabel.png").create();
-    await file.writeAsBytes(await xImg.readAsBytes());
+    GetIt.I<Survey01Data>().pictures[index] = xImg;
 
     if (index <= 3) {
       GetIt.I<Survey01Data>().picturesTaken[index] = true;
@@ -253,7 +230,6 @@ class _S01GroundShakingFormState extends State<S01GroundShakingForm> with Automa
         extraPictureNumber++;
       });
     }
-    // List<FileSystemEntity> files = saveDir.listSync();
   }
 
   Widget cameraButtonIcon({required bool isTicked}) {
