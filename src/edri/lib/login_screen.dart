@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinput/pinput.dart';
 import 'util.dart';
@@ -83,25 +85,43 @@ class _LoginScreenState extends State<LoginScreen> {
   String verID = "";
 
   void sendOTP() async {
-    await auth.verifyPhoneNumber(
-      phoneNumber: "+91${numberController.text}",
-      verificationCompleted: (PhoneAuthCredential credential) {},
-      verificationFailed: (FirebaseAuthException e) {
-        Fluttertoast.showToast(msg: "Something went wrong!");
-        setState(() {
-          isLoading = false;
-        });
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        verID = verificationId;
-        Fluttertoast.showToast(msg: "OTP sent!");
-        setState(() {
-          sentOTP = true;
-          isLoading = false;
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
+    if (kIsWeb) {
+      ConfirmationResult confirmationResult =
+          await auth.signInWithPhoneNumber("+91${numberController.text}").catchError(
+        (err, stackTrace) {
+          Fluttertoast.showToast(msg: "Something went wrong!");
+          setState(() {
+            sentOTP = false;
+            isLoading = false;
+          });
+        },
+      );
+      setState(() {
+        sentOTP = true;
+        isLoading = false;
+      });
+      verID = confirmationResult.verificationId;
+    } else {
+      await auth.verifyPhoneNumber(
+        phoneNumber: "+91${numberController.text}",
+        verificationCompleted: (PhoneAuthCredential credential) {},
+        verificationFailed: (FirebaseAuthException e) {
+          Fluttertoast.showToast(msg: "Something went wrong!");
+          setState(() {
+            isLoading = false;
+          });
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          verID = verificationId;
+          Fluttertoast.showToast(msg: "OTP sent!");
+          setState(() {
+            sentOTP = true;
+            isLoading = false;
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    }
   }
 
   void verifyOTP() async {
@@ -144,6 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             TextField(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
                 floatingLabelBehavior: FloatingLabelBehavior.auto,

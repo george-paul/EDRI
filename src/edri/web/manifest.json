@@ -1,12 +1,13 @@
 {
-    "name": "edri",
-    "short_name": "edri",
+    "name": "EDRI",
+    "short_name": "EDRI",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ff8a65",
     "theme_color": "#ff8a65",
     "description": "EDRI Progressive Web App",
     "orientation": "portrait",
+    "scope": "/",
     "prefer_related_applications": false,
     "icons": [
         {
