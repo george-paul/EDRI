@@ -1,10 +1,9 @@
-import 'dart:io';
+import "../save_results/save_results_base.dart"
+    if (dart.library.html) "../save_results/save_results_web.dart"
+    if (dart.library.io) "../save_results/save_results_android.dart";
 import 'dart:math';
-import 'package:archive/archive.dart';
 import 'package:edri/global_data.dart';
-import 'package:edri/util.dart';
 import 'package:edri/vulnerability_data.dart' as vuln;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
@@ -273,90 +272,9 @@ class Survey01Data {
       ),
     );
 
-    if (kIsWeb) {
-      saveResultsWeb(pdf);
-    } else if (Platform.isAndroid) {
-      saveResultsAndroid(pdf);
-    }
-  }
-
-  saveResultsAndroid(pw.Document pdf) async {
-    //
-    //----------------------------- Save PDF -----------------------------
-    //
     String timeString = "$inspDate$inspTime".replaceAll(RegExp(r"\D"), "");
-
-    Directory saveDir = await Directory("/storage/emulated/0/Download/EDRIreports").create();
-    File file = await File("${saveDir.path}/${timeString}_EDRIReport.pdf").create();
-    await file.writeAsBytes(await pdf.save());
-
-    //
-    //----------------------------- Save Images -----------------------------
-    //
-    for (int index = 0; index < pictures.length; index++) {
-      XFile xImg = pictures[index]!;
-      String fileLabel = "";
-      switch (index) {
-        case 0:
-          fileLabel = "Front";
-          break;
-        case 1:
-          fileLabel = "Left";
-          break;
-        case 2:
-          fileLabel = "Right";
-          break;
-        case 3:
-          fileLabel = "Back";
-          break;
-        default:
-          fileLabel = "Extra${index - 3}";
-      }
-      File file = await File("${saveDir.path}/${timeString}_StructureView$fileLabel.png").create();
-      await file.writeAsBytes(await xImg.readAsBytes());
-    }
+    SaveResults().save(pdf, timeString, pictures);
     Fluttertoast.showToast(msg: "Generated results at Downloads");
-  }
-
-  saveResultsWeb(pw.Document pdf) async {
-    Archive archive = Archive();
-
-    //
-    //----------------------------- Save PDF -----------------------------
-    //
-    String timeString = "$inspDate$inspTime".replaceAll(RegExp(r"\D"), "");
-    Uint8List pdfBytes = await pdf.save();
-    archive.addFile(ArchiveFile("${timeString}_EDRIReport.pdf", pdfBytes.length, pdfBytes));
-
-    //
-    //----------------------------- Save Images -----------------------------
-    //
-    for (int index = 0; index < pictures.length; index++) {
-      XFile xImg = pictures[index]!;
-      String fileLabel = "";
-      switch (index) {
-        case 0:
-          fileLabel = "Front";
-          break;
-        case 1:
-          fileLabel = "Left";
-          break;
-        case 2:
-          fileLabel = "Right";
-          break;
-        case 3:
-          fileLabel = "Back";
-          break;
-        default:
-          fileLabel = "Extra${index - 3}";
-      }
-      Uint8List xImgBytes = await xImg.readAsBytes();
-      archive.addFile(ArchiveFile("${timeString}_StructureView$fileLabel.png", xImgBytes.length, xImgBytes));
-    }
-
-    Uint8List archiveBytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
-    triggerDownload(bytes: archiveBytes, downloadName: "${timeString}_EDRIReport.zip");
-    Fluttertoast.showToast(msg: "Generated results");
   }
 
   final red = Colors.red.shade400.value;

@@ -96,6 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         },
       );
+      Fluttertoast.showToast(msg: "OTP sent!");
       setState(() {
         sentOTP = true;
         isLoading = false;
@@ -241,6 +242,49 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
 
+    Widget submitBackButtons(BuildContext context) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          (sentOTP)
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    setState(() {
+                      sentOTP = false;
+                    });
+                  },
+                )
+              : Container(),
+          ElevatedButton(
+            onPressed: () {
+              if (!sentOTP) {
+                setState(() {
+                  isLoading = true;
+                });
+                sendOTP();
+              } else {
+                verifyOTP();
+              }
+            },
+            child: (isLoading)
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+                    child: SizedBox(
+                      height: Theme.of(context).textTheme.labelLarge?.fontSize,
+                      width: Theme.of(context).textTheme.labelLarge?.fontSize,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.0,
+                        color: (!isDarkTheme(context)) ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  )
+                : const Text("Submit"),
+          ),
+        ],
+      );
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
@@ -302,34 +346,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: screenHeight * 0.05,
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (!sentOTP) {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            sendOTP();
-                          } else {
-                            verifyOTP();
-                          }
-                        },
-                        child: (isLoading)
-                            ? Padding(
-                                padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-                                child: SizedBox(
-                                  height: Theme.of(context).textTheme.labelLarge?.fontSize,
-                                  width: Theme.of(context).textTheme.labelLarge?.fontSize,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.0,
-                                    color: (!isDarkTheme(context)) ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              )
-                            : const Text("Submit"),
-                      ),
-                    ),
+                    submitBackButtons(context),
                   ],
                 ),
               ),

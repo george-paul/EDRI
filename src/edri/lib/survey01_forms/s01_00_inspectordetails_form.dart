@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:edri/survey01_forms/survey01_data.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
-import 'package:location/location.dart';
+import 'package:http/http.dart';
 
 class S01InspectorDetailsForm extends StatefulWidget {
   const S01InspectorDetailsForm({Key? key}) : super(key: key);
@@ -31,36 +35,39 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
     super.initState();
   }
 
-  Future<LocationData?> getLocation() async {
-    Location location = Location();
+  Future<String?> getLocation() async {
+    if (!kIsWeb) {
+      bool serviceEnabled;
 
-    bool serviceEnabled;
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         Fluttertoast.showToast(msg: "Please enable location services");
         return null;
       }
-    }
-
-    PermissionStatus permissionGranted;
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        Fluttertoast.showToast(msg: "Please grant access to location data");
-        return null;
+      LocationPermission permission;
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.unableToDetermine) {
+        Fluttertoast.showToast(msg: "Cannot access location data");
       }
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.deniedForever) {
+          Fluttertoast.showToast(msg: "Cannot access location data");
+          return null;
+        }
+      }
+      Position position = await Geolocator.getCurrentPosition().catchError((err) {
+        Fluttertoast.showToast(msg: "Couldn't get your location");
+        setState(() {
+          isLoadingLocation = false;
+        });
+      });
+      return "${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}";
+    } else {
+      final response = await get(Uri.parse("https://geolocation-db.com/json/"));
+      Map<String, dynamic> responseJson = json.decode(response.body.toString());
+      return "${responseJson["latitude"]}, ${responseJson["longitude"]}";
     }
-    if (permissionGranted == PermissionStatus.deniedForever) {
-      Fluttertoast.showToast(msg: "Please grant access to location data in app settings");
-      return null;
-    }
-
-    LocationData locationData;
-    locationData = await location.getLocation();
-    return locationData;
   }
 
   Widget buildGetLocationButton() {
@@ -69,9 +76,9 @@ class _S01InspectorDetailsFormState extends State<S01InspectorDetailsForm> with 
         setState(() {
           isLoadingLocation = true;
         });
-        LocationData? location = await getLocation();
+        String? location = await getLocation();
         if (location != null) {
-          coordsCtl.text = "${location.latitude!.toStringAsFixed(5)}, ${location.longitude!.toStringAsFixed(5)}";
+          coordsCtl.text = location;
           GetIt.I<Survey01Data>().coords = coordsCtl.text;
         }
         setState(() {
