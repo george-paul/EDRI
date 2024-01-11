@@ -42,7 +42,7 @@ dependencies:
   pdf: ^3.8.4
   location: ^4.4.0
   image_picker: ^0.8.6+1
-  archive: ^3.3.6
+  archive: ^3.3.8
   geolocator: ^9.0.2
   http: ^0.13.5
 
